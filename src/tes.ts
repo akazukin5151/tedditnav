@@ -1,9 +1,9 @@
-var currentIndex = null
+var currentIndex: number = null
 var collapsedIndicesRoots: number[] = []
 var allCollapsedIndices: number[] = []
 var [allComments, allCommentsIdx, parentComments, depths] = getAllElementsFlattened()
 
-function handleCommentClick(event) {
+function handleCommentClick(event: any) {
     let comment = event.target
     while (!comment.className.includes('comment')) {
         comment = comment.parentElement
@@ -43,7 +43,7 @@ document.addEventListener('keypress', function onPress(event) {
     currentIndex = newIndex
 })
 
-function goDownChild(currentIndex, allIndices) {
+function goDownChild(currentIndex: number, allIndices: number[]) {
     if (currentIndex === null) {
         return 0
     }
@@ -66,7 +66,7 @@ function goDownChild(currentIndex, allIndices) {
     return currentIndex + 1
 }
 
-function goUpChild(currentIndex, allIndices) {
+function goUpChild(currentIndex: number, allIndices: number[]) {
     if (currentIndex === null) {
         return 0
     }
@@ -93,7 +93,7 @@ function goUpChild(currentIndex, allIndices) {
     return tenatative
 }
 
-function goDownParent(currentIndex, parentComments) {
+function goDownParent(currentIndex: number, parentComments: number[]) {
     if (currentIndex === null) {
         return 0
     }
@@ -117,7 +117,7 @@ function goDownParent(currentIndex, parentComments) {
     return currentIndex
 }
 
-function goUpParent(currentIndex) {
+function goUpParent(currentIndex: number) {
     if (currentIndex === null) {
         return 0
     }
@@ -136,7 +136,7 @@ function goUpParent(currentIndex) {
     return currentIndex
 }
 
-function scrollToIndex(oldIndex, newIndex) {
+function scrollToIndex(oldIndex: number, newIndex: number) {
     if (oldIndex === newIndex) {
         return
     }
@@ -144,7 +144,7 @@ function scrollToIndex(oldIndex, newIndex) {
     selectIndex(oldIndex, newIndex)
 }
 
-function selectIndex(oldIndex, newIndex) {
+function selectIndex(oldIndex: number, newIndex: number) {
     allComments[newIndex].style.backgroundColor = '#e0edfc'
     if (oldIndex != null) {
         allComments[oldIndex].style.backgroundColor = ''
@@ -180,7 +180,9 @@ function allCommentsFlattened() {
     return [Array.from(comments), indices, parentIndices, depths]
 }
 
-function getAllChildComments(parentComment, currentDepth) {
+function getAllChildComments(
+    parentComment: any, currentDepth: number
+): [any[], number[]] {
     let thisComment = parentComment.children[0].children
     let comments = []
     let depths = []
@@ -210,7 +212,7 @@ function toggleCollapse() {
     comment.open = !comment.open
 }
 
-function collapse(currentDepth) {
+function collapse(currentDepth: number) {
     collapsedIndicesRoots.push(currentIndex)
     // Also push in every next comment with a greater depth,
     // until meeting a comment with equal depth
@@ -222,7 +224,7 @@ function collapse(currentDepth) {
     }
 }
 
-function uncollapse(currentDepth) {
+function uncollapse(currentDepth: number) {
     collapsedIndicesRoots = collapsedIndicesRoots.filter(
         item => item != currentIndex
     )
@@ -257,7 +259,7 @@ function openComments() {
     //browser.tabs.goBack()
 }
 
-function searchByClass(elements, name) {
+function searchByClass(elements: any, name: string) {
     for (const element of elements) {
         if (element.className === name) {
             return element
@@ -265,7 +267,7 @@ function searchByClass(elements, name) {
     }
 }
 
-function searchByTag(elements, name) {
+function searchByTag(elements: any, name: string) {
     for (const element of elements) {
         if (element.localName === name) {
             return element
@@ -273,7 +275,7 @@ function searchByTag(elements, name) {
     }
 }
 
-function findClosest(arr, goal) {
+function findClosest(arr: number[], goal: number) {
     return arr.reduce(
         (prev, curr) => Math.abs(curr - goal) < Math.abs(prev - goal)
             ? curr

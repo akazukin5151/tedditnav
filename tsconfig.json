@@ -3,6 +3,7 @@
   "compilerOptions": {
     "outDir": "build",
     "lib": ["es2016", "dom"],
-    "downlevelIteration": true
+    "downlevelIteration": true,
+    "noImplicitAny": true
   }
 }
