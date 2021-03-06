@@ -1,0 +1,16 @@
+{
+
+  "manifest_version": 2,
+  "name": "tes",
+  "version": "1.0",
+
+  "description": "Keyboard navigation for teddit.net",
+
+  "content_scripts": [
+    {
+      "matches": ["*://teddit.net/*"],
+      "js": ["build/tes.js"]
+    }
+  ]
+
+}
