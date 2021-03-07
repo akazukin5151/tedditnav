@@ -238,16 +238,16 @@ function openComments() {
     //browser.tabs.goBack()
 }
 
-function searchByClass(elements: any, name: string) {
-    for (const element of elements) {
+function searchByClass(elements: HTMLCollection, name: string) {
+    for (const element of <any>elements) {
         if (element.className === name) {
             return element
         }
     }
 }
 
-function searchByTag(elements: any, name: string) {
-    for (const element of elements) {
+function searchByTag(elements: HTMLCollection, name: string) {
+    for (const element of <any>elements) {
         if (element.localName === name) {
             return element
         }
