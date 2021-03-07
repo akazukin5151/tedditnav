@@ -29,7 +29,7 @@ function storageGetAll() {
 }
 
 document.addEventListener('keypress', async function onPress(event) {
-    let settings = await storageGetAll()
+    const settings = await storageGetAll()
 
     switch (event.key) {
         case settings.opencomments:
@@ -88,7 +88,7 @@ function goUpChild(currentIndex: number) {
     if (currentIndex === 0) {
         return currentIndex
     }
-    let tenatative = currentIndex - 1
+    const tenatative = currentIndex - 1
     if (collapsedIndicesRoots.size > 0 && allCollapsedIndices.has(tenatative)) {
         // Look for the previous collapsed root comment
         return allCommentsIdx
@@ -144,12 +144,12 @@ function selectIndex(oldIndex: number, newIndex: number) {
 
 
 function getAllElementsFlattened() {
-    let posts = document.querySelectorAll('.entry')
+    const posts = document.querySelectorAll('.entry')
     if (posts.length === 0) {
         return allCommentsFlattened()
     } else {
-        let indices = [...Array(posts.length).keys()]
-        let depths = Array(posts.length).fill(0)
+        const indices = [...Array(posts.length).keys()]
+        const depths = Array(posts.length).fill(0)
         return [Array.from(posts), indices, indices, depths]
     }
 }
@@ -158,23 +158,23 @@ function allCommentsFlattened() {
     let comments = []
     let parentIndices = []
     let depths = []
-    let parentComments = document.querySelectorAll('.comments')[0].children
+    const parentComments = document.querySelectorAll('.comments')[0].children
     for (const comment of <any>parentComments) {
         comments.push(comment)
         depths.push(0)
         parentIndices.push(comments.length - 1)
-        let [rec_comments, rec_depths] = getAllChildComments(comment, 0)
+        const [rec_comments, rec_depths] = getAllChildComments(comment, 0)
         comments.push(...rec_comments)
         depths.push(...rec_depths)
     }
-    let indices = [...Array(comments.length).keys()]
+    const indices = [...Array(comments.length).keys()]
     return [Array.from(comments), indices, parentIndices, depths]
 }
 
 function getAllChildComments(
     parentComment: any, currentDepth: number
 ): [any[], number[]] {
-    let thisComment = parentComment.children[0].children
+    const thisComment = parentComment.children[0].children
     let comments = []
     let depths = []
     for (const el of thisComment) {
@@ -182,7 +182,7 @@ function getAllChildComments(
             comments.push(el)
             depths.push(currentDepth + 1)
             // extend the comments array with child comments
-            let [rec_comments, rec_depths] = getAllChildComments(el, currentDepth + 1)
+            const [rec_comments, rec_depths] = getAllChildComments(el, currentDepth + 1)
             comments.push(...rec_comments)
             depths.push(...rec_depths)
         }
@@ -194,7 +194,7 @@ function getAllChildComments(
 
 function toggleCollapse() {
     let comment = allComments[currentIndex].children[0]
-    let currentDepth = depths[currentIndex]
+    const currentDepth = depths[currentIndex]
     if (comment.open) {
         collapse(currentDepth)
     } else {
@@ -230,9 +230,9 @@ function uncollapse(currentDepth: number) {
 }
 
 function togglePreview() {
-    let element = document.querySelectorAll('.entry')[currentIndex]
-    let meta = searchByClass(element.children, 'meta')
-    let links = searchByClass(meta.children, 'links')
+    const element = document.querySelectorAll('.entry')[currentIndex]
+    const meta = searchByClass(element.children, 'meta')
+    const links = searchByClass(meta.children, 'links')
     let container = searchByTag(links.children, 'details')
     container.open = !container.open
     // In case if the preview is at the bottom of the page
@@ -240,10 +240,10 @@ function togglePreview() {
 }
 
 function openComments() {
-    let element = document.querySelectorAll('.entry')[currentIndex]
-    let meta = searchByClass(element.children, 'meta')
-    let links = searchByClass(meta.children, 'links')
-    let comments = searchByClass(links.children, 'comments')
+    const element = document.querySelectorAll('.entry')[currentIndex]
+    const meta = searchByClass(element.children, 'meta')
+    const links = searchByClass(meta.children, 'links')
+    const comments = searchByClass(links.children, 'comments')
     //FIXME: open in background
     window.open(comments.href)
     //this doesn't work
