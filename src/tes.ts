@@ -1,7 +1,7 @@
 var initTriggered: boolean = false
 var currentIndex: number = 0
-var collapsedIndicesRoots: number[] = []
-var allCollapsedIndices: number[] = []
+var collapsedIndicesRoots: Set<number> = new Set()
+var allCollapsedIndices: Set<number> = new Set()
 var [allComments, allCommentsIdx, parentComments, depths] = getAllElementsFlattened()
 
 function handleCommentClick(event: any) {
@@ -56,18 +56,11 @@ function goDownChild(currentIndex: number, allIndices: number[]) {
     if (currentIndex === allIndices[-1]) {
         return currentIndex
     }
-    let currentDepth = depths[currentIndex]
-    let nextDepth = depths[currentIndex + 1]
-    if (allCollapsedIndices.includes(currentIndex) && nextDepth > currentDepth) {
-        let collapsedDepth = depths[currentIndex]
-        if (collapsedDepth === 0) {
-            return goDownParent(currentIndex, parentComments)
-        }
-        // Look for the next comment with the same depth as the collapsed comment
-        return depths
-                .slice(currentIndex + 1)
-                .findIndex(el => el === collapsedDepth)
-                + currentIndex + 1
+    if (collapsedIndicesRoots.has(currentIndex)) {
+        // Find the next comment not collapsed
+        return allCommentsIdx
+            .slice(currentIndex + 1)
+            .find((idx) => !allCollapsedIndices.has(idx))
     }
     return currentIndex + 1
 }
@@ -83,14 +76,14 @@ function goUpChild(currentIndex: number) {
     // If previous comment is part of a collapsed comment chain,
     // go to the previous comment with the same depth as the current comment
     let tenatative = currentIndex - 1
-    if (collapsedIndicesRoots.length > 0) {
+    if (collapsedIndicesRoots.size > 0) {
         let currentDepth = depths[currentIndex]
         let closest = findClosest(collapsedIndicesRoots, currentIndex)
         let collapsedDepth = depths[closest]
         if (
-            allCollapsedIndices.includes(tenatative)
+            allCollapsedIndices.has(tenatative)
             && collapsedDepth === currentDepth
-            && !collapsedIndicesRoots.includes(tenatative)
+            && !collapsedIndicesRoots.has(tenatative)
         ) {
             // Look for the index of the closest previous collapsed comment
             let slice = depths.slice(0, currentIndex - 1).reverse()
@@ -219,25 +212,25 @@ function toggleCollapse() {
 }
 
 function collapse(currentDepth: number) {
-    collapsedIndicesRoots.push(currentIndex)
+    collapsedIndicesRoots.add(currentIndex)
     // Also push in every next comment with a greater depth,
     // until meeting a comment with equal depth
-    allCollapsedIndices.push(currentIndex)
-    for (const [idx, depth] of depths.entries()) {
+    allCollapsedIndices.add(currentIndex)
+    for (const [idx, depth] of depths.slice(currentIndex + 1).entries()) {
         if (depth > currentDepth) {
-            allCollapsedIndices.push(idx)
+            allCollapsedIndices.add(idx + currentIndex + 1)
+        } else {
+            break
         }
     }
 }
 
 function uncollapse(currentDepth: number) {
-    collapsedIndicesRoots = collapsedIndicesRoots.filter(
-        item => item != currentIndex
-    )
-    allCollapsedIndices = allCollapsedIndices.filter(item => item != currentIndex)
-    for (const [idx, collapsedIdx] of allCollapsedIndices.entries()) {
+    collapsedIndicesRoots.delete(currentIndex)
+    allCollapsedIndices.delete(currentIndex)
+    for (const collapsedIdx of allCollapsedIndices) {
         if (depths[collapsedIdx] > currentDepth) {
-            allCollapsedIndices.slice(idx, 1)
+            allCollapsedIndices.delete(collapsedIdx)
         } else if (depths[collapsedIdx] === currentDepth) {
             break
         }
@@ -281,8 +274,8 @@ function searchByTag(elements: any, name: string) {
     }
 }
 
-function findClosest(arr: number[], goal: number) {
-    return arr.reduce(
+function findClosest(set: Set<number>, goal: number) {
+    return Array.from(set).reduce(
         (prev, curr) => Math.abs(curr - goal) < Math.abs(prev - goal)
             ? curr
             : prev
