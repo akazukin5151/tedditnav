@@ -4,6 +4,7 @@
     "outDir": "build",
     "lib": ["es2016", "dom"],
     "downlevelIteration": true,
-    "noImplicitAny": true
+    "noImplicitAny": true,
+    "strictNullChecks": true
   }
 }

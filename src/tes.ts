@@ -1,4 +1,5 @@
-var currentIndex: number = null
+var initTriggered: boolean = false
+var currentIndex: number = 0
 var collapsedIndicesRoots: number[] = []
 var allCollapsedIndices: number[] = []
 var [allComments, allCommentsIdx, parentComments, depths] = getAllElementsFlattened()
@@ -23,7 +24,15 @@ for (let el of elements) {
 }
 
 document.addEventListener('keypress', function onPress(event) {
-    let newIndex
+    if (event.key === 'c') {
+        return openComments()
+    } else if (event.key === 'x') {
+        return togglePreview()
+    } else if (event.key === 'q') {
+        return toggleCollapse()
+    }
+
+    let newIndex: number = 0  // Will be changed anyway
     if (event.key === 's') {
         newIndex = goDownParent(currentIndex, parentComments)
     } else if (event.key === 'w') {
@@ -32,20 +41,15 @@ document.addEventListener('keypress', function onPress(event) {
         newIndex = goDownChild(currentIndex, allCommentsIdx)
     } else if (event.key === 'r') {
         newIndex = goUpChild(currentIndex, allCommentsIdx)
-    } else if (event.key === 'c') {
-        openComments()
-    } else if (event.key === 'x') {
-        togglePreview()
-    } else if (event.key === 'q') {
-        toggleCollapse()
     }
     scrollToIndex(currentIndex, newIndex)
     currentIndex = newIndex
 })
 
 function goDownChild(currentIndex: number, allIndices: number[]) {
-    if (currentIndex === null) {
-        return 0
+    if (!initTriggered) {
+        initTriggered = true
+        return currentIndex
     }
     if (currentIndex === allIndices[-1]) {
         return currentIndex
@@ -67,8 +71,9 @@ function goDownChild(currentIndex: number, allIndices: number[]) {
 }
 
 function goUpChild(currentIndex: number, allIndices: number[]) {
-    if (currentIndex === null) {
-        return 0
+    if (!initTriggered) {
+        initTriggered = true
+        return currentIndex
     }
     if (currentIndex === 0) {
         return currentIndex
@@ -94,8 +99,9 @@ function goUpChild(currentIndex: number, allIndices: number[]) {
 }
 
 function goDownParent(currentIndex: number, parentComments: number[]) {
-    if (currentIndex === null) {
-        return 0
+    if (!initTriggered) {
+        initTriggered = true
+        return currentIndex
     }
     if (currentIndex >= parentComments[-1]) {
         return currentIndex
@@ -118,8 +124,9 @@ function goDownParent(currentIndex: number, parentComments: number[]) {
 }
 
 function goUpParent(currentIndex: number) {
-    if (currentIndex === null) {
-        return 0
+    if (!initTriggered) {
+        initTriggered = true
+        return currentIndex
     }
     if (currentIndex === 0) {
         return currentIndex
@@ -137,16 +144,13 @@ function goUpParent(currentIndex: number) {
 }
 
 function scrollToIndex(oldIndex: number, newIndex: number) {
-    if (oldIndex === newIndex) {
-        return
-    }
     allComments[newIndex].scrollIntoView()
     selectIndex(oldIndex, newIndex)
 }
 
 function selectIndex(oldIndex: number, newIndex: number) {
     allComments[newIndex].style.backgroundColor = '#e0edfc'
-    if (oldIndex != null) {
+    if (oldIndex != newIndex) {
         allComments[oldIndex].style.backgroundColor = ''
     }
 }
