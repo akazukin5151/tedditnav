@@ -2,7 +2,7 @@ var initTriggered: boolean = false
 var currentIndex: number = 0
 var collapsedIndicesRoots: Set<number> = new Set()
 var allCollapsedIndices: Set<number> = new Set()
-var [allComments, allCommentsIdx, parentComments, depths] = getAllElementsFlattened()
+var [allComments, allCommentsIdx, parentCommentsIdx, depths] = getAllElementsFlattened()
 
 function handleCommentClick(event: any) {
     let clickedComment = event.target
@@ -33,7 +33,7 @@ document.addEventListener('keypress', function onPress(event) {
 
     let newIndex: number = 0  // Will be changed anyway
     if (event.key === 's') {
-        newIndex = goDownParent(currentIndex, parentComments)
+        newIndex = goDownParent(currentIndex, parentCommentsIdx)
     } else if (event.key === 'w') {
         newIndex = goUpParent(currentIndex)
     } else if (event.key === 'f') {
@@ -83,23 +83,23 @@ function goUpChild(currentIndex: number) {
     return tenatative
 }
 
-function goDownParent(currentIndex: number, parentComments: number[]) {
+function goDownParent(currentIndex: number, parentCommentsIdx: number[]) {
     if (!initTriggered) {
         initTriggered = true
         return currentIndex
     }
-    if (currentIndex >= parentComments[-1]) {
+    if (currentIndex >= parentCommentsIdx[-1]) {
         return currentIndex
     }
-    if (parentComments.includes(currentIndex)) {
-        let res = parentComments[parentComments.indexOf(currentIndex) + 1]
+    if (parentCommentsIdx.includes(currentIndex)) {
+        let res = parentCommentsIdx[parentCommentsIdx.indexOf(currentIndex) + 1]
         if (!res) {
             return currentIndex
         } else {
             return res
         }
     }
-    return parentComments.find(idx => idx >= currentIndex) || currentIndex
+    return parentCommentsIdx.find(idx => idx >= currentIndex) || currentIndex
 }
 
 function goUpParent(currentIndex: number) {
@@ -110,11 +110,11 @@ function goUpParent(currentIndex: number) {
     if (currentIndex === 0) {
         return currentIndex
     }
-    if (parentComments.includes(currentIndex)) {
-        return parentComments[parentComments.indexOf(currentIndex) - 1]
+    if (parentCommentsIdx.includes(currentIndex)) {
+        return parentCommentsIdx[parentCommentsIdx.indexOf(currentIndex) - 1]
     }
     // Else: in a child comment, look for previous parent comment
-    for (const idx of parentComments.slice().reverse()) {
+    for (const idx of parentCommentsIdx.slice().reverse()) {
         if (idx < currentIndex) {
             return idx
         }
