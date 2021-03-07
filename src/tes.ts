@@ -41,6 +41,8 @@ document.addEventListener('keypress', function onPress(event) {
         newIndex = goDownChild(currentIndex, allCommentsIdx)
     } else if (event.key === 'r') {
         newIndex = goUpChild(currentIndex)
+    } else {
+        return
     }
     scrollToIndex(currentIndex, newIndex)
     currentIndex = newIndex
