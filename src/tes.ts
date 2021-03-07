@@ -92,12 +92,8 @@ function goDownParent(currentIndex: number, parentCommentsIdx: number[]) {
         return currentIndex
     }
     if (parentCommentsIdx.includes(currentIndex)) {
-        let res = parentCommentsIdx[parentCommentsIdx.indexOf(currentIndex) + 1]
-        if (!res) {
-            return currentIndex
-        } else {
-            return res
-        }
+        return parentCommentsIdx[parentCommentsIdx.indexOf(currentIndex) + 1]
+            || currentIndex
     }
     return parentCommentsIdx.find(idx => idx >= currentIndex) || currentIndex
 }
