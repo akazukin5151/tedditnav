@@ -31,25 +31,33 @@ function storageGetAll() {
 document.addEventListener('keypress', async function onPress(event) {
     let settings = await storageGetAll()
 
-    if (event.key === settings.opencomments) {
-        return openComments()
-    } else if (event.key === settings.togglepreview) {
-        return togglePreview()
-    } else if (event.key === settings.togglecollapse) {
-        return toggleCollapse()
+    switch (event.key) {
+        case settings.opencomments:
+            return openComments()
+        case settings.togglepreview:
+            return togglePreview()
+        case settings.togglecollapse:
+            return toggleCollapse()
+        default:
+            break
     }
 
     let newIndex: number = 0  // Will be changed anyway
-    if (event.key === settings.nextparent) {
-        newIndex = goDownParent(currentIndex, parentCommentsIdx)
-    } else if (event.key === settings.prevparent) {
-        newIndex = goUpParent(currentIndex)
-    } else if (event.key === settings.nextall) {
-        newIndex = goDownChild(currentIndex, allCommentsIdx)
-    } else if (event.key === settings.prevall) {
-        newIndex = goUpChild(currentIndex)
-    } else {
-        return
+    switch (event.key) {
+        case settings.nextparent:
+            newIndex = goDownParent(currentIndex, parentCommentsIdx)
+            break
+        case settings.prevparent:
+            newIndex = goUpParent(currentIndex)
+            break
+        case settings.nextall:
+            newIndex = goDownChild(currentIndex, allCommentsIdx)
+            break
+        case settings.prevall:
+            newIndex = goUpChild(currentIndex)
+            break
+        default:
+            return
     }
     scrollToIndex(currentIndex, newIndex)
     currentIndex = newIndex
