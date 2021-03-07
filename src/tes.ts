@@ -99,13 +99,7 @@ function goDownParent(currentIndex: number, parentComments: number[]) {
             return res
         }
     }
-    // Else: in a child comment, look for next parent comment
-    for (const idx of parentComments) {
-        if (idx >= currentIndex) {
-            return idx
-        }
-    }
-    return currentIndex
+    return parentComments.find(idx => idx >= currentIndex) || currentIndex
 }
 
 function goUpParent(currentIndex: number) {
