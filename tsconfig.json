@@ -5,6 +5,10 @@
     "lib": ["es2016", "dom"],
     "downlevelIteration": true,
     "noImplicitAny": true,
-    "strictNullChecks": true
+    "strictNullChecks": true,
+    "strict": true,
+    "noImplicitReturns": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true
   }
 }

@@ -40,7 +40,7 @@ document.addEventListener('keypress', function onPress(event) {
     } else if (event.key === 'f') {
         newIndex = goDownChild(currentIndex, allCommentsIdx)
     } else if (event.key === 'r') {
-        newIndex = goUpChild(currentIndex, allCommentsIdx)
+        newIndex = goUpChild(currentIndex)
     }
     scrollToIndex(currentIndex, newIndex)
     currentIndex = newIndex
@@ -70,7 +70,7 @@ function goDownChild(currentIndex: number, allIndices: number[]) {
     return currentIndex + 1
 }
 
-function goUpChild(currentIndex: number, allIndices: number[]) {
+function goUpChild(currentIndex: number) {
     if (!initTriggered) {
         initTriggered = true
         return currentIndex
