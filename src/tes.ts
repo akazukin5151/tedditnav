@@ -73,22 +73,13 @@ function goUpChild(currentIndex: number) {
     if (currentIndex === 0) {
         return currentIndex
     }
-    // If previous comment is part of a collapsed comment chain,
-    // go to the previous comment with the same depth as the current comment
     let tenatative = currentIndex - 1
-    if (collapsedIndicesRoots.size > 0) {
-        let currentDepth = depths[currentIndex]
-        let closest = findClosest(collapsedIndicesRoots, currentIndex)
-        let collapsedDepth = depths[closest]
-        if (
-            allCollapsedIndices.has(tenatative)
-            && collapsedDepth === currentDepth
-            && !collapsedIndicesRoots.has(tenatative)
-        ) {
-            // Look for the index of the closest previous collapsed comment
-            let slice = depths.slice(0, currentIndex - 1).reverse()
-            return slice.length - 1 - slice.findIndex(el => el === currentDepth)
-        }
+    if (collapsedIndicesRoots.size > 0 && allCollapsedIndices.has(tenatative)) {
+        // Look for the previous collapsed root comment
+        return allCommentsIdx
+                .slice(0, currentIndex)
+                .reverse()
+                .find((idx) => collapsedIndicesRoots.has(idx))
     }
     return tenatative
 }
