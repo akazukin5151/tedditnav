@@ -114,12 +114,8 @@ function goUpParent(currentIndex: number) {
         return parentCommentsIdx[parentCommentsIdx.indexOf(currentIndex) - 1]
     }
     // Else: in a child comment, look for previous parent comment
-    for (const idx of parentCommentsIdx.slice().reverse()) {
-        if (idx < currentIndex) {
-            return idx
-        }
-    }
-    return currentIndex
+    return parentCommentsIdx.slice().reverse().find(idx => idx < currentIndex)
+        || currentIndex
 }
 
 function scrollToIndex(oldIndex: number, newIndex: number) {
