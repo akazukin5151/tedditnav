@@ -5,12 +5,12 @@ var allCollapsedIndices: Set<number> = new Set()
 var [allComments, allCommentsIdx, parentComments, depths] = getAllElementsFlattened()
 
 function handleCommentClick(event: any) {
-    let comment = event.target
-    while (!comment.className.includes('comment')) {
-        comment = comment.parentElement
+    let clickedComment = event.target
+    while (!clickedComment.className.includes('comment')) {
+        clickedComment = clickedComment.parentElement
     }
-    for (const [idx, commentIdx] of allComments.entries()) {
-        if (commentIdx.id === comment.id && currentIndex != idx) {
+    for (const [idx, comment] of allComments.entries()) {
+        if (comment.id === clickedComment.id && currentIndex != idx) {
             selectIndex(currentIndex, idx)
             currentIndex = idx
             break
