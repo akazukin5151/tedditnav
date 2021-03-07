@@ -18,10 +18,9 @@ function handleCommentClick(event: any) {
     }
 }
 
-var elements: any = document.getElementsByClassName('comment')
-for (let el of elements) {
-    el.addEventListener('click', handleCommentClick, false)
-}
+Array.from(document.getElementsByClassName('comment')).forEach(
+    el => el.addEventListener('click', handleCommentClick, false)
+)
 
 document.addEventListener('keypress', function onPress(event) {
     if (event.key === 'c') {
