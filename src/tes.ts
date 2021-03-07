@@ -22,23 +22,31 @@ Array.from(document.getElementsByClassName('comment')).forEach(
     el => el.addEventListener('click', handleCommentClick, false)
 )
 
-document.addEventListener('keypress', function onPress(event) {
-    if (event.key === 'c') {
+// My typescript doesn't recognise the word `browser` for some reason
+function storageGetAll() {
+    //@ts-ignore
+    return browser.storage.sync.get()
+}
+
+document.addEventListener('keypress', async function onPress(event) {
+    let settings = await storageGetAll()
+
+    if (event.key === settings.opencomments) {
         return openComments()
-    } else if (event.key === 'x') {
+    } else if (event.key === settings.togglepreview) {
         return togglePreview()
-    } else if (event.key === 'q') {
+    } else if (event.key === settings.togglecollapse) {
         return toggleCollapse()
     }
 
     let newIndex: number = 0  // Will be changed anyway
-    if (event.key === 's') {
+    if (event.key === settings.nextparent) {
         newIndex = goDownParent(currentIndex, parentCommentsIdx)
-    } else if (event.key === 'w') {
+    } else if (event.key === settings.prevparent) {
         newIndex = goUpParent(currentIndex)
-    } else if (event.key === 'f') {
+    } else if (event.key === settings.nextall) {
         newIndex = goDownChild(currentIndex, allCommentsIdx)
-    } else if (event.key === 'r') {
+    } else if (event.key === settings.prevall) {
         newIndex = goUpChild(currentIndex)
     } else {
         return
@@ -231,7 +239,8 @@ function openComments() {
     //FIXME: open in background
     window.open(comments.href)
     //this doesn't work
-    //browser.tabs.goBack()
+    //@ts-ignore
+    //browser.tabs.create({url: comments.href})
 }
 
 function searchByClass(elements: HTMLCollection, name: string) {
