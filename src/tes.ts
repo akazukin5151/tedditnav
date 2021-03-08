@@ -1,5 +1,6 @@
 var initTriggered: boolean = false
 var currentIndex: number = 0
+var previewEnabled: boolean = false
 var collapsedIndicesRoots: Set<number> = new Set()
 var allCollapsedIndices: Set<number> = new Set()
 const [allComments, allCommentsIdx, parentCommentsIdx, depths] = getAllElementsFlattened()
@@ -91,8 +92,16 @@ document.addEventListener('keypress', async function onPress(event) {
         default:
             return
     }
+    let shouldToggleAgain = false
+    if (previewEnabled) {
+        shouldToggleAgain = true
+        togglePreview()
+    }
     scrollToIndex(currentIndex, newIndex)
     currentIndex = newIndex
+    if (shouldToggleAgain) {
+        togglePreview()
+    }
 })
 
 function goDownChild(currentIndex: number, allIndices: number[]) {
@@ -273,6 +282,7 @@ function togglePreview() {
     container.open = !container.open
     // In case if the preview is at the bottom of the page
     document.querySelectorAll('.entry')[currentIndex].scrollIntoView()
+    previewEnabled = !previewEnabled
 }
 
 function openComments() {
