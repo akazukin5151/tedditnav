@@ -262,6 +262,10 @@ function uncollapse(currentDepth: number) {
 }
 
 function togglePreview() {
+    if (!initTriggered) {
+        initTriggered = true
+        scrollToIndex(0, 0)
+    }
     const element = document.querySelectorAll('.entry')[currentIndex]
     const meta = searchByClass(element.children, 'meta')
     const links = searchByClass(meta.children, 'links')
