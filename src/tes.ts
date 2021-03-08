@@ -10,7 +10,7 @@ function handleCommentClick(event: any) {
         clickedComment = clickedComment.parentElement
     }
     for (const [idx, comment] of allComments.entries()) {
-        if (comment.id === clickedComment.id && currentIndex != idx) {
+        if (comment.id === clickedComment.id && currentIndex !== idx) {
             selectIndex(currentIndex, idx)
             currentIndex = idx
             break
@@ -29,7 +29,7 @@ function handlePostClick(event: any) {
     }
     clickedPost = clickedPost.children[2]
     for (const [idx, post] of allComments.entries()) {
-        if (post.textContent === clickedPost.textContent && currentIndex != idx) {
+        if (post.textContent === clickedPost.textContent && currentIndex !== idx) {
             selectIndex(currentIndex, idx)
             currentIndex = idx
             break
@@ -169,7 +169,7 @@ function scrollToIndex(oldIndex: number, newIndex: number) {
 
 function selectIndex(oldIndex: number, newIndex: number) {
     allComments[newIndex].style.backgroundColor = '#e0edfc'
-    if (oldIndex != newIndex) {
+    if (oldIndex !== newIndex) {
         allComments[oldIndex].style.backgroundColor = ''
     }
 }
