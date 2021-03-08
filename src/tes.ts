@@ -3,7 +3,9 @@ var currentIndex: number = 0
 var previewEnabled: boolean = false
 var collapsedIndicesRoots: Set<number> = new Set()
 var allCollapsedIndices: Set<number> = new Set()
-const [allComments, allCommentsIdx, parentCommentsIdx, depths] = getAllElementsFlattened()
+const [
+    allComments, allCommentsIdx, parentCommentsIdx, depths
+] = getAllElementsFlattened()
 
 function handleCommentClick(event: any) {
     let clickedComment = event.target
