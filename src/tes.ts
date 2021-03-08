@@ -41,6 +41,18 @@ Array.from(document.getElementsByClassName('link')).forEach(
     el => el.addEventListener('click', handlePostClick, false)
 )
 
+function checkIfInput() {
+    const active: any = document.activeElement
+    try {
+        if (active.type === 'text') {
+            return true
+        }
+    } catch {
+        // Ignore
+    }
+    return false
+}
+
 // My typescript doesn't recognise the word `browser` for some reason
 function storageGetAll() {
     //@ts-ignore
@@ -48,6 +60,7 @@ function storageGetAll() {
 }
 
 document.addEventListener('keypress', async function onPress(event) {
+    if (checkIfInput()) {return}
     const settings = await storageGetAll()
 
     switch (event.key) {
