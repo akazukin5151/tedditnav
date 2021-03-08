@@ -2,7 +2,7 @@ var initTriggered: boolean = false
 var currentIndex: number = 0
 var collapsedIndicesRoots: Set<number> = new Set()
 var allCollapsedIndices: Set<number> = new Set()
-var [allComments, allCommentsIdx, parentCommentsIdx, depths] = getAllElementsFlattened()
+const [allComments, allCommentsIdx, parentCommentsIdx, depths] = getAllElementsFlattened()
 
 function handleCommentClick(event: any) {
     let clickedComment = event.target
@@ -20,6 +20,25 @@ function handleCommentClick(event: any) {
 
 Array.from(document.getElementsByClassName('comment')).forEach(
     el => el.addEventListener('click', handleCommentClick, false)
+)
+
+function handlePostClick(event: any) {
+    let clickedPost = event.target
+    while (!(clickedPost.className === 'link')) {
+        clickedPost = clickedPost.parentElement
+    }
+    clickedPost = clickedPost.children[2]
+    for (const [idx, post] of allComments.entries()) {
+        if (post.textContent === clickedPost.textContent && currentIndex != idx) {
+            selectIndex(currentIndex, idx)
+            currentIndex = idx
+            break
+        }
+    }
+}
+
+Array.from(document.getElementsByClassName('link')).forEach(
+    el => el.addEventListener('click', handlePostClick, false)
 )
 
 // My typescript doesn't recognise the word `browser` for some reason
