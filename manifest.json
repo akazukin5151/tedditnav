@@ -1,7 +1,7 @@
 {
 
   "manifest_version": 2,
-  "name": "tes",
+  "name": "tedditnav",
   "version": "1.0",
 
   "description": "Keyboard navigation for teddit.net",
@@ -12,7 +12,7 @@
   "content_scripts": [
     {
       "matches": ["*://teddit.net/*"],
-      "js": ["build/tes.js"]
+      "js": ["build/tedditnav.js"]
     }
   ],
 
@@ -22,7 +22,7 @@
   "permissions": ["storage"],
   "browser_specific_settings": {
       "gecko": {
-          "id": "tes@twenty.com"
+          "id": "tedditnav@twenty.com"
     }
   }
 }

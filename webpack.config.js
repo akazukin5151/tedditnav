@@ -1,6 +1,6 @@
 const config = {
     entry: {
-        tes: './src/tes.ts',
+        tedditnav: './src/tedditnav.ts',
         background: './src/background.ts',
         options: './src/options.ts'
     },
