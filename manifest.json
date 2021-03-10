@@ -22,7 +22,7 @@
   "permissions": ["storage"],
   "browser_specific_settings": {
       "gecko": {
-          "id": "tes@example.com"
+          "id": "tes@twenty.com"
     }
   }
 }
