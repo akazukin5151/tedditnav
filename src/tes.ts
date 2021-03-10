@@ -311,11 +311,3 @@ function searchByTag(elements: HTMLCollection, name: string) {
         }
     }
 }
-
-function findClosest(set: Set<number>, goal: number) {
-    return Array.from(set).reduce(
-        (prev, curr) => Math.abs(curr - goal) < Math.abs(prev - goal)
-            ? curr
-            : prev
-    )
-}
