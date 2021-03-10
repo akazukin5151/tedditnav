@@ -1,10 +1,11 @@
+import { browser } from "webextension-polyfill-ts"
+
 function unwrapOr(nullable: any, default_: string) {
     return nullable ? nullable.value : default_
 }
 
 function saveOptions(event: Event) {
     event.preventDefault();
-    //@ts-ignore
     browser.storage.sync.set({
         prevparent: unwrapOr(document.querySelector("#prevparent"), 'w'),
         nextparent: unwrapOr(document.querySelector("#nextparent"),'s'),
@@ -40,7 +41,6 @@ function restoreOptions() {
         'opencomments', 'togglepreview', 'togglecollapse'
     ]
     for (const setting of settings) {
-        //@ts-ignore
         browser.storage.sync.get(setting).then(
             (r: any) => onSuccess(r, setting),
             onError

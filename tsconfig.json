@@ -1,6 +1,8 @@
 {
   "include": ["src/*"],
+  "sourceMap": true,
   "compilerOptions": {
+    "moduleResolution": "node",
     "outDir": "build",
     "lib": ["es2016", "dom"],
     "downlevelIteration": true,

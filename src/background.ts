@@ -1,5 +1,5 @@
-//@ts-ignore
+import { browser } from "webextension-polyfill-ts"
+
 browser.runtime.onMessage.addListener(
-    //@ts-ignore
-    message => browser.tabs.create({url: message.url, active: false})
+    (message: any) => browser.tabs.create({url: message.url, active: false})
 )

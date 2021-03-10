@@ -1,3 +1,5 @@
+import { browser } from "webextension-polyfill-ts"
+
 var initTriggered: boolean = false
 var currentIndex: number = 0
 var previewEnabled: boolean = false
@@ -56,9 +58,7 @@ function checkIfInput() {
     return false
 }
 
-// My typescript doesn't recognise the word `browser` for some reason
 function storageGetAll() {
-    //@ts-ignore
     return browser.storage.sync.get()
 }
 
@@ -292,7 +292,6 @@ function openComments() {
     const meta = searchByClass(element.children, 'meta')
     const links = searchByClass(meta.children, 'links')
     const comments = searchByClass(links.children, 'comments')
-    //@ts-ignore
     browser.runtime.sendMessage({"url": comments.href})
 }
 
