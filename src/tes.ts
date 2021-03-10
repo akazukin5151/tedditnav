@@ -292,11 +292,8 @@ function openComments() {
     const meta = searchByClass(element.children, 'meta')
     const links = searchByClass(meta.children, 'links')
     const comments = searchByClass(links.children, 'comments')
-    //FIXME: open in background
-    window.open(comments.href)
-    //this doesn't work
     //@ts-ignore
-    //browser.tabs.create({url: comments.href})
+    browser.runtime.sendMessage({"url": comments.href})
 }
 
 function searchByClass(elements: HTMLCollection, name: string) {

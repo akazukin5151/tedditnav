@@ -6,6 +6,9 @@
 
   "description": "Keyboard navigation for teddit.net",
 
+  "background": {
+      "scripts": ["build/background.js"]
+  },
   "content_scripts": [
     {
       "matches": ["*://teddit.net/*"],
