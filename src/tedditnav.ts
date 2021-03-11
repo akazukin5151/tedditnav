@@ -88,13 +88,9 @@ function checkIfInput() {
     return false
 }
 
-function storageGetAll() {
-    return browser.storage.sync.get()
-}
-
 document.addEventListener('keypress', async function onPress(event) {
     if (checkIfInput()) {return}
-    const settings = await storageGetAll()
+    const settings = await browser.storage.sync.get()
 
     switch (event.key) {
         case settings.opencomments:
