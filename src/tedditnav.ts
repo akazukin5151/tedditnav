@@ -14,8 +14,16 @@ function handleCommentClick(event: any) {
     while (!clickedComment.className.includes('comment')) {
         clickedComment = clickedComment.parentElement
     }
+    // classList doesn't contain odd or even depth
+    if (clickedComment.classList.length < 2) {
+        // This is a user page not a comment page
+        // In a user page, allComments collects elements with class `entry` instead
+        while (clickedComment.className !== 'entry') {
+            clickedComment = clickedComment.parentElement
+        }
+    }
     for (const [idx, comment] of allComments.entries()) {
-        if (comment.id === clickedComment.id && currentIndex !== idx) {
+        if (comment.textContent === clickedComment.textContent && currentIndex !== idx) {
             selectIndex(currentIndex, idx)
             currentIndex = idx
             break
