@@ -9,39 +9,13 @@ const [
     allComments, allCommentsIdx, parentCommentsIdx, depths
 ] = getAllElementsFlattened()
 
-function handleCommentClick(event: any) {
-    let clickedComment = event.target
-    while (!clickedComment.className.includes('comment')) {
-        clickedComment = clickedComment.parentElement
-    }
-    // classList doesn't contain odd or even depth
-    if (clickedComment.classList.length < 2) {
-        // This is a user page not a comment page
-        // In a user page, allComments collects elements with class `entry` instead
-        while (clickedComment.className !== 'entry') {
-            clickedComment = clickedComment.parentElement
-        }
-    }
-    for (const [idx, comment] of allComments.entries()) {
-        if (comment.textContent === clickedComment.textContent && currentIndex !== idx) {
-            selectIndex(currentIndex, idx)
-            currentIndex = idx
-            break
-        }
-    }
-}
-
-Array.from(document.getElementsByClassName('comment')).forEach(
-    el => el.addEventListener('click', handleCommentClick, false)
-)
-
 function abstractHandlePostClick(
     event: any,
-    className: string,
+    comp: (clicked: any) => any,
     processor: (post: any) => any,
 ) {
     let clickedPost = event.target
-    while (!(clickedPost.className === className)) {
+    while (comp(clickedPost)) {
         clickedPost = clickedPost.parentElement
     }
     clickedPost = processor(clickedPost)
@@ -54,8 +28,35 @@ function abstractHandlePostClick(
     }
 }
 
+function handleCommentClick(event: any) {
+    function processor(clickedComment: any) {
+        // if classList doesn't contain odd or even depth...
+        if (clickedComment.classList.length < 2) {
+            // ...then this is a user page not a comment page
+            // In a user page, allComments collects elements with class `entry` instead
+            while (clickedComment.className !== 'entry') {
+                clickedComment = clickedComment.parentElement
+            }
+        }
+        return clickedComment
+    }
+    return abstractHandlePostClick(
+        event,
+        (clicked) => !clicked.className.includes('comment'),
+        processor
+    )
+}
+
+Array.from(document.getElementsByClassName('comment')).forEach(
+    el => el.addEventListener('click', handleCommentClick, false)
+)
+
 function handlePostClick(event: any) {
-    return abstractHandlePostClick(event, 'link', (post) => post.children[2])
+    return abstractHandlePostClick(
+        event,
+        (clicked) => clicked.className !== 'link',
+        (post) => post.children[2]
+    )
 }
 
 Array.from(document.getElementsByClassName('link')).forEach(
@@ -63,7 +64,11 @@ Array.from(document.getElementsByClassName('link')).forEach(
 )
 
 function handleUserPostClick(event: any) {
-    return abstractHandlePostClick(event, 'entry t3', (x) => x)
+    return abstractHandlePostClick(
+        event,
+        (clicked) => clicked.className !== 'entry t3',
+        (x) => x
+    )
 }
 
 Array.from(document.getElementsByClassName('entry t3')).forEach(
