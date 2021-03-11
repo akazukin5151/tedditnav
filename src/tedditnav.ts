@@ -76,7 +76,7 @@ Array.from(document.getElementsByClassName('entry t3')).forEach(
     el => el.addEventListener('click', handleUserPostClick, false)
 )
 
-function checkIfInput() {
+function inputFocused() {
     const active: any = document.activeElement
     try {
         if (active.type === 'text') {
@@ -89,7 +89,7 @@ function checkIfInput() {
 }
 
 document.addEventListener('keypress', async function onPress(event) {
-    if (checkIfInput()) {return}
+    if (inputFocused()) {return}
     const settings = await browser.storage.sync.get()
 
     switch (event.key) {
