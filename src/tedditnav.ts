@@ -27,12 +27,16 @@ Array.from(document.getElementsByClassName('comment')).forEach(
     el => el.addEventListener('click', handleCommentClick, false)
 )
 
-function handlePostClick(event: any) {
+function abstractHandlePostClick(
+    event: any,
+    className: string,
+    processor: (post: any) => any,
+) {
     let clickedPost = event.target
-    while (!(clickedPost.className === 'link')) {
+    while (!(clickedPost.className === className)) {
         clickedPost = clickedPost.parentElement
     }
-    clickedPost = clickedPost.children[2]
+    clickedPost = processor(clickedPost)
     for (const [idx, post] of allComments.entries()) {
         if (post.textContent === clickedPost.textContent && currentIndex !== idx) {
             selectIndex(currentIndex, idx)
@@ -42,22 +46,16 @@ function handlePostClick(event: any) {
     }
 }
 
+function handlePostClick(event: any) {
+    return abstractHandlePostClick(event, 'link', (post) => post.children[2])
+}
+
 Array.from(document.getElementsByClassName('link')).forEach(
     el => el.addEventListener('click', handlePostClick, false)
 )
 
 function handleUserPostClick(event: any) {
-    let clickedPost = event.target
-    while (!(clickedPost.className === 'entry t3')) {
-        clickedPost = clickedPost.parentElement
-    }
-    for (const [idx, post] of allComments.entries()) {
-        if (post.textContent === clickedPost.textContent && currentIndex !== idx) {
-            selectIndex(currentIndex, idx)
-            currentIndex = idx
-            break
-        }
-    }
+    return abstractHandlePostClick(event, 'entry t3', (x) => x)
 }
 
 Array.from(document.getElementsByClassName('entry t3')).forEach(
