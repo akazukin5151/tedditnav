@@ -9,6 +9,7 @@ const [
     allComments, allCommentsIdx, parentCommentsIdx, depths
 ] = getAllElementsFlattened()
 
+
 function abstractHandlePostClick(
     event: any,
     comp: (clicked: any) => any,
@@ -47,10 +48,6 @@ function handleCommentClick(event: any) {
     )
 }
 
-Array.from(document.getElementsByClassName('comment')).forEach(
-    el => el.addEventListener('click', handleCommentClick, false)
-)
-
 function handlePostClick(event: any) {
     return abstractHandlePostClick(
         event,
@@ -59,10 +56,6 @@ function handlePostClick(event: any) {
     )
 }
 
-Array.from(document.getElementsByClassName('link')).forEach(
-    el => el.addEventListener('click', handlePostClick, false)
-)
-
 function handleUserPostClick(event: any) {
     return abstractHandlePostClick(
         event,
@@ -70,6 +63,14 @@ function handleUserPostClick(event: any) {
         (x) => x
     )
 }
+
+Array.from(document.getElementsByClassName('comment')).forEach(
+    el => el.addEventListener('click', handleCommentClick, false)
+)
+
+Array.from(document.getElementsByClassName('link')).forEach(
+    el => el.addEventListener('click', handlePostClick, false)
+)
 
 Array.from(document.getElementsByClassName('entry t3')).forEach(
     el => el.addEventListener('click', handleUserPostClick, false)
