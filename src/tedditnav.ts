@@ -290,8 +290,15 @@ function togglePreview() {
 function openComments() {
     const element = document.querySelectorAll('.entry')[currentIndex]
     const meta = searchByClass(element.children, 'meta')
-    const links = searchByClass(meta.children, 'links')
-    const comments = searchByClass(links.children, 'comments')
+    let comments
+    if (meta) {
+        const links = searchByClass(meta.children, 'links')
+        comments = searchByClass(links.children, 'comments')
+    } else {
+        const title = searchByClass(element.children, 'title')
+        const meta = searchByClass(title.children, 'meta')
+        comments = searchByClass(meta.children, 'comments')
+    }
     browser.runtime.sendMessage({"url": comments.href})
 }
 
