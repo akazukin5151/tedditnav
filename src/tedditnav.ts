@@ -46,6 +46,24 @@ Array.from(document.getElementsByClassName('link')).forEach(
     el => el.addEventListener('click', handlePostClick, false)
 )
 
+function handleUserPostClick(event: any) {
+    let clickedPost = event.target
+    while (!(clickedPost.className === 'entry t3')) {
+        clickedPost = clickedPost.parentElement
+    }
+    for (const [idx, post] of allComments.entries()) {
+        if (post.textContent === clickedPost.textContent && currentIndex !== idx) {
+            selectIndex(currentIndex, idx)
+            currentIndex = idx
+            break
+        }
+    }
+}
+
+Array.from(document.getElementsByClassName('entry t3')).forEach(
+    el => el.addEventListener('click', handleUserPostClick, false)
+)
+
 function checkIfInput() {
     const active: any = document.activeElement
     try {
