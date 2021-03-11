@@ -13,8 +13,9 @@ teddit is an open source frontend for reddit (like invidio and nitter)
 
 ## Install
 
-1. TODO
-2. Go to about:addons -> tedditnav -> Preferences and enter your key bindings then save it. Otherwise it does nothing
+1. Download from `https://addons.mozilla.org/addon/tedditnav/`
+2. Go to `about:addons -> tedditnav -> Preferences` and enter your key bindings then save it (Otherwise it does nothing)
+3. Go to `teddit.net` and enjoy
 
 ## Develop
 1. Git clone
