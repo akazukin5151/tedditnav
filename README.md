@@ -7,14 +7,16 @@ Based on [RES](https://github.com/honestbleeps/Reddit-Enhancement-Suite)
 teddit is an open source frontend for reddit (like invidio and nitter)
 
 ## Features
-1. go up/down posts, parent comments, and child comments
-2. toggle preview
-3. open comment in new background tab
+1. Go up/down posts, parent comments, and child comments
+2. Toggle image preview
+3. Toggle comment collapse
+4. Open comment in new background tab
+5. Adjust size of image preview
 
 ## Install
 
 1. Download from `https://addons.mozilla.org/addon/tedditnav/`
-2. Go to `about:addons -> tedditnav -> Preferences` and enter your key bindings then save it (Otherwise it does nothing)
+2. Go to `about:addons -> tedditnav -> Preferences` and enter your key bindings then save it
 3. Go to `teddit.net` and enjoy
 
 ## Develop
