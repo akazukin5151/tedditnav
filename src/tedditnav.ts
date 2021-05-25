@@ -310,6 +310,16 @@ function togglePreview() {
     container.open = !container.open
     // In case if the preview is at the bottom of the page
     document.querySelectorAll('.entry')[currentIndex].scrollIntoView()
+
+    // Resize the image to fit the browser screen
+    let image = searchByClass(container.children, 'preview').children[0]
+    const height = document.documentElement.clientHeight
+    const new_height = height
+        - searchByClass(element.children, 'title').clientHeight
+        - searchByClass(meta.children, 'submitted').clientHeight
+        - searchByClass(container.children, 'summary').clientHeight
+    image.style.setProperty('height', new_height.toString() + 'px', 'important')
+
     previewEnabled = !previewEnabled
 }
 
@@ -330,7 +340,7 @@ function openComments() {
 
 function searchByClass(elements: HTMLCollection, name: string) {
     for (const element of <any>elements) {
-        if (element.className === name) {
+        if (element.className === name || element.localName === name) {
             return element
         }
     }
