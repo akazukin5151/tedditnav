@@ -349,7 +349,7 @@ function changeImageSize(by: number) {
     const container = searchByTag(links.children, 'details')
     let image = searchByClass(container.children, 'preview').children[0]
     const new_height = image.height + by
-    image.style.setProperty('height', new_height.toString() + 'px', 'important')
+    image.style.setProperty('max-height', new_height.toString() + 'px', 'important')
 }
 
 function searchByClass(elements: HTMLCollection, name: string) {
