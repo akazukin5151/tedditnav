@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "ts-loader": "^9.2.2",
+    "webextension-polyfill-ts": "^0.25.0",
+    "webpack": "^5.37.1",
+    "webpack-cli": "^4.7.0"
+  }
+}
