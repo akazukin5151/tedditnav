@@ -1,5 +1,7 @@
 # tedditnav
 
+<a href="https://addons.mozilla.org/addon/tedditnav/"><img src=https://blog.mozilla.org/addons/files/2020/04/get-the-addon-fx-apr-2020.svg height="50"></a>
+
 Add basic keyboard navigation to teddit.net
 
 Based on [RES](https://github.com/honestbleeps/Reddit-Enhancement-Suite)
@@ -15,7 +17,7 @@ teddit is an open source frontend for reddit (like invidio and nitter)
 
 ## Install
 
-1. Download from `https://addons.mozilla.org/addon/tedditnav/`
+1. Download from https://addons.mozilla.org/addon/tedditnav/
 2. Go to `about:addons -> tedditnav -> Preferences` and enter your key bindings then save it
 3. Go to `teddit.net` and enjoy
 
