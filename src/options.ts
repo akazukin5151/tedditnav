@@ -4,20 +4,24 @@ function unwrapOr(nullable: any, default_: string) {
     return nullable ? nullable.value : default_
 }
 
+function setOrDefault<V>(map: Map<string, V>, name: string, default_: string) {
+    map.set(name, unwrapOr(document.querySelector('#' + name), default_))
+}
+
 function saveOptions(event: Event) {
-    event.preventDefault();
-    browser.storage.sync.set({
-        prevparent: unwrapOr(document.querySelector("#prevparent"), 'w'),
-        nextparent: unwrapOr(document.querySelector("#nextparent"),'s'),
-        prevall: unwrapOr(document.querySelector("#prevall"),'r'),
-        nextall: unwrapOr(document.querySelector("#nextall"),'f'),
-        opencomments: unwrapOr(document.querySelector("#opencomments"), 'o'),
-        togglepreview: unwrapOr(document.querySelector("#togglepreview"), 'x'),
-        togglecollapse: unwrapOr(document.querySelector("#togglecollapse"),'q'),
-        incimgsize: unwrapOr(document.querySelector("#incimgsize"), '='),
-        decimgsize: unwrapOr(document.querySelector("#decimgsize"), '-'),
-        incdecsize: unwrapOr(document.querySelector("#incdecsize"), '30'),
-    });
+    event.preventDefault()
+    let map = new Map()
+    setOrDefault(map, 'prevparent', 'w')
+    setOrDefault(map, 'nextparent', 's')
+    setOrDefault(map, 'prevall', 'r')
+    setOrDefault(map, 'nextall', 'f')
+    setOrDefault(map, 'opencomments', 'c')
+    setOrDefault(map, 'togglepreview', 'x')
+    setOrDefault(map, 'togglecollapse', 'q')
+    setOrDefault(map, 'incimgsize', '=')
+    setOrDefault(map, 'decimgsize', '-')
+    setOrDefault(map, 'incdecsize', '30')
+    browser.storage.sync.set(map)
 }
 
 function getKey(result: any, setting: string) {
