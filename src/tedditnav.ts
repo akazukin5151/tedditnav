@@ -322,7 +322,7 @@ function togglePreview() {
         - searchByClass(element.children, 'title').clientHeight
         - searchByClass(meta.children, 'submitted').clientHeight
         - searchByClass(container.children, 'summary').clientHeight
-    image.style.setProperty('height', new_height.toString() + 'px', 'important')
+    image.style.setProperty('max-height', new_height.toString() + 'px', 'important')
 
     previewEnabled = !previewEnabled
 }
