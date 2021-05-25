@@ -99,6 +99,10 @@ document.addEventListener('keypress', async function onPress(event) {
             return togglePreview()
         case settings.togglecollapse:
             return toggleCollapse()
+        case settings.incimgsize:
+            return changeImageSize(Number(settings.incdecsize))
+        case settings.decimgsize:
+            return changeImageSize(-1 * Number(settings.incdecsize))
         default:
             break
     }
@@ -309,7 +313,7 @@ function togglePreview() {
     let container = searchByTag(links.children, 'details')
     container.open = !container.open
     // In case if the preview is at the bottom of the page
-    document.querySelectorAll('.entry')[currentIndex].scrollIntoView()
+    element.scrollIntoView()
 
     // Resize the image to fit the browser screen
     let image = searchByClass(container.children, 'preview').children[0]
@@ -336,6 +340,16 @@ function openComments() {
         comments = searchByClass(meta.children, 'comments')
     }
     browser.runtime.sendMessage({"url": comments.href})
+}
+
+function changeImageSize(by: number) {
+    const element = document.querySelectorAll('.entry')[currentIndex]
+    const meta = searchByClass(element.children, 'meta')
+    const links = searchByClass(meta.children, 'links')
+    const container = searchByTag(links.children, 'details')
+    let image = searchByClass(container.children, 'preview').children[0]
+    const new_height = image.height + by
+    image.style.setProperty('height', new_height.toString() + 'px', 'important')
 }
 
 function searchByClass(elements: HTMLCollection, name: string) {

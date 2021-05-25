@@ -14,6 +14,9 @@ function saveOptions(event: Event) {
         opencomments: unwrapOr(document.querySelector("#opencomments"), 'o'),
         togglepreview: unwrapOr(document.querySelector("#togglepreview"), 'x'),
         togglecollapse: unwrapOr(document.querySelector("#togglecollapse"),'q'),
+        incimgsize: unwrapOr(document.querySelector("#incimgsize"), '='),
+        decimgsize: unwrapOr(document.querySelector("#decimgsize"), '-'),
+        incdecsize: unwrapOr(document.querySelector("#incdecsize"), '30'),
     });
 }
 
@@ -38,7 +41,8 @@ function onError(error: any) {
 function restoreOptions() {
     const settings = [
         'prevparent', 'nextparent', 'prevall', 'nextall',
-        'opencomments', 'togglepreview', 'togglecollapse'
+        'opencomments', 'togglepreview', 'togglecollapse', 'incimgsize', 'decimgsize',
+        'incdecsize'
     ]
     for (const setting of settings) {
         browser.storage.sync.get(setting).then(
