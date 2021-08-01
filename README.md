@@ -18,6 +18,7 @@ teddit is an open source frontend for reddit (like invidio and nitter)
 ## Install
 
 1. Download from https://addons.mozilla.org/addon/tedditnav/
+    - Or download the xpi file from releases
 2. Go to `about:addons -> tedditnav -> Preferences` and enter your key bindings then save it
 3. Go to `teddit.net` and enjoy
 
@@ -29,9 +30,13 @@ teddit is an open source frontend for reddit (like invidio and nitter)
 Note that eval-source-map doesn't work for background.ts because CSP blocks eval calls. The exclude option for EvalSourceMapDevToolPlugin doesn't work either. Either copy in the production version or use another devtool option. The debugger isn't really needed for background.ts, but it prevents the preferences page from reading stored settings
 
 ### Release
-0. Bump version in `manifest.json`
-1. `zip -r -FS build/tedditnav.zip * --exclude '*.git*' --exclude '*node_modules*'`
-2. Upload the zip file to mozilla
+0. Clear the build directory and run `npx webpack --mode=production`
+1. Bump version in `manifest.json`
+2. `zip -r -FS build/tedditnav.zip * --exclude '*.git*' --exclude '*node_modules*'`
+3. Upload the zip file to mozilla
+4. Download the xpi file and upload to Github releases
+    - Go to https://addons.mozilla.org/en-US/developers/addon/tedditnav/versions/
+    - Select the latest version and download the xpi file
 
 ## Privacy
 
