@@ -217,6 +217,9 @@ function selectIndex(oldIndex: number, newIndex: number) {
 
 
 function getAllElementsFlattened() {
+    if (document.URL.includes('/u/')) {
+        return getUserElements()
+    }
     const posts = document.querySelectorAll('.entry')
     if (posts.length === 0) {
         return allCommentsFlattened()
@@ -225,6 +228,14 @@ function getAllElementsFlattened() {
         const depths = Array(posts.length).fill(0)
         return [Array.from(posts), indices, indices, depths]
     }
+}
+
+function getUserElements() {
+    let entries = Array.from(document.querySelectorAll('.entries')[0].children)
+    entries = entries.slice(0, entries.length - 2)
+    const indices = [...Array(entries.length).keys()]
+    const depths = Array(entries.length).fill(0)
+    return [entries, indices, indices, depths]
 }
 
 function allCommentsFlattened() {
