@@ -339,19 +339,25 @@ function togglePreview() {
 }
 
 function openComments() {
-    const element = document.querySelectorAll('.entry')[currentIndex]
-    const meta = searchByClass(element.children, 'meta')
+    let entry
+    if (document.URL.includes('/u/')) {
+        entry = allComments[currentIndex].children[2]
+    } else {
+        entry = document.querySelectorAll('.entry')[currentIndex]
+    }
+    const meta = searchByClass(entry.children, 'meta')
     let comments
     if (meta) {
         const links = searchByClass(meta.children, 'links')
         comments = searchByClass(links.children, 'comments')
     } else {
-        const title = searchByClass(element.children, 'title')
+        const title = searchByClass(entry.children, 'title')
         const meta = searchByClass(title.children, 'meta')
         comments = searchByClass(meta.children, 'comments')
     }
     browser.runtime.sendMessage({"url": comments.href})
 }
+
 
 function changeImageSize(by: number) {
     const element = document.querySelectorAll('.entry')[currentIndex]
