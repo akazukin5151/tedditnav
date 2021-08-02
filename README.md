@@ -30,12 +30,13 @@ teddit is an open source frontend for reddit (like invidio and nitter)
 Note that eval-source-map doesn't work for background.ts because CSP blocks eval calls. The exclude option for EvalSourceMapDevToolPlugin doesn't work either. Either copy in the production version or use another devtool option. The debugger isn't really needed for background.ts, but it prevents the preferences page from reading stored settings
 
 ### Release
-0. Clear the build directory and run `npx webpack --mode=production`
 1. Bump version in `manifest.json`
-2. `zip -r -FS build/tedditnav.zip * --exclude '*.git*' --exclude '*node_modules*'`
-3. Upload the zip file to mozilla
-4. Download the xpi file and upload to Github releases
-    - Go to https://addons.mozilla.org/en-US/developers/addon/tedditnav/versions/
+2. `npm run clean`
+3. `npm run build`
+4. `npm run release`
+5. Upload build/tedditnav.zip to mozilla and provide the source code with build/source.zip
+6. Download the xpi file and upload to Github releases
+    - Go to https://addons.mozilla.org/en-US/developers/addon/teddit-image-previews/versions/
     - Select the latest version and download the xpi file
 
 ## Privacy

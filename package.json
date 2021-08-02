@@ -1,4 +1,10 @@
 {
+  "scripts": {
+      "build": "npx webpack --mode=production",
+      "dev": "npx webpack --mode=development",
+      "clean": "rm -r build/",
+      "release": "zip -r -FS build/tedditnav.zip build/ LICENSE manifest.json README.md && zip -r -FS build/source.zip * --exclude '*.git*' --exclude '*node_modules*'"
+  },
   "dependencies": {
     "ts-loader": "^9.2.2",
     "webextension-polyfill-ts": "^0.25.0",
