@@ -320,12 +320,7 @@ function togglePreview() {
         initTriggered = true
         scrollToIndex(0, 0)
     }
-    let entry
-    if (document.URL.includes('/u/')) {
-        entry = allComments[currentIndex].children[2]
-    } else {
-        entry = allComments[currentIndex]
-    }
+    const entry = getCurrentEntry()
     const meta = searchByClass(entry.children, 'meta')
     const links = searchByClass(meta.children, 'links')
     let container = searchByTag(links.children, 'details')
@@ -336,22 +331,16 @@ function togglePreview() {
     // Resize the image to fit the browser screen
     let image = searchByClass(container.children, 'preview').children[0]
     const height = document.documentElement.clientHeight
-    const new_height = height
         - searchByClass(entry.children, 'title').clientHeight
         - searchByClass(meta.children, 'submitted').clientHeight
         - searchByClass(container.children, 'summary').clientHeight
-    image.style.setProperty('max-height', new_height.toString() + 'px', 'important')
+    image.style.setProperty('max-height', height.toString() + 'px', 'important')
 
     previewEnabled = !previewEnabled
 }
 
 function openComments() {
-    let entry
-    if (document.URL.includes('/u/')) {
-        entry = allComments[currentIndex].children[2]
-    } else {
-        entry = allComments[currentIndex]
-    }
+    const entry = getCurrentEntry()
     const meta = searchByClass(entry.children, 'meta')
     let comments
     if (meta) {
@@ -367,12 +356,7 @@ function openComments() {
 
 
 function changeImageSize(by: number) {
-    let entry
-    if (document.URL.includes('/u/')) {
-        entry = allComments[currentIndex].children[2]
-    } else {
-        entry = allComments[currentIndex]
-    }
+    const entry = getCurrentEntry()
     const meta = searchByClass(entry.children, 'meta')
     const links = searchByClass(meta.children, 'links')
     const container = searchByTag(links.children, 'details')
@@ -395,4 +379,11 @@ function searchByTag(elements: HTMLCollection, name: string) {
             return element
         }
     }
+}
+
+function getCurrentEntry() {
+    if (document.URL.includes('/u/')) {
+        return allComments[currentIndex].children[2]
+    }
+    return allComments[currentIndex]
 }
