@@ -36,7 +36,7 @@ Note that eval-source-map doesn't work for background.ts because CSP blocks eval
 4. `npm run release`
 5. Upload build/tedditnav.zip to mozilla and provide the source code with build/source.zip
 6. Download the xpi file and upload to Github releases
-    - Go to https://addons.mozilla.org/en-US/developers/addon/teddit-image-previews/versions/
+    - Go to https://addons.mozilla.org/en-US/developers/addon/tedditnav/versions/
     - Select the latest version and download the xpi file
 
 ## Privacy
