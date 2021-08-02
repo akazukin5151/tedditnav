@@ -136,7 +136,7 @@ document.addEventListener('keypress', async function onPress(event) {
     }
 })
 
-function goDownChild(currentIndex: number, allIndices: number[]) {
+function goDownChild(currentIndex: number, allIndices: number[]): number {
     if (!initTriggered) {
         initTriggered = true
         return currentIndex
@@ -148,12 +148,12 @@ function goDownChild(currentIndex: number, allIndices: number[]) {
         // Find the next comment not collapsed
         return allCommentsIdx
             .slice(currentIndex + 1)
-            .find((idx) => !allCollapsedIndices.has(idx))
+            .find((idx) => !allCollapsedIndices.has(idx))!
     }
     return currentIndex + 1
 }
 
-function goUpChild(currentIndex: number) {
+function goUpChild(currentIndex: number): number {
     if (!initTriggered) {
         initTriggered = true
         return currentIndex
@@ -167,7 +167,7 @@ function goUpChild(currentIndex: number) {
         return allCommentsIdx
                 .slice(0, currentIndex)
                 .reverse()
-                .find((idx) => collapsedIndicesRoots.has(idx))
+                .find((idx) => collapsedIndicesRoots.has(idx))!
     }
     return tenatative
 }
@@ -209,14 +209,16 @@ function scrollToIndex(oldIndex: number, newIndex: number) {
 }
 
 function selectIndex(oldIndex: number, newIndex: number) {
-    allComments[newIndex].style.backgroundColor = '#e0edfc'
+    let e1 = allComments[newIndex] as HTMLElement
+    e1.style.backgroundColor = '#e0edfc'
     if (oldIndex !== newIndex) {
-        allComments[oldIndex].style.backgroundColor = ''
+        let e2 = allComments[oldIndex] as HTMLElement
+        e2.style.backgroundColor = ''
     }
 }
 
 
-function getAllElementsFlattened() {
+function getAllElementsFlattened(): [Element[], number[], number[], number[]] {
     if (document.URL.includes('/u/')) {
         return getUserElements()
     }
@@ -230,7 +232,7 @@ function getAllElementsFlattened() {
     }
 }
 
-function getUserElements() {
+function getUserElements(): [Element[], number[], number[], number[]]  {
     let entries = Array.from(document.querySelectorAll('.entries')[0].children)
     entries = entries.slice(0, entries.length - 2)
     const indices = [...Array(entries.length).keys()]
@@ -238,7 +240,7 @@ function getUserElements() {
     return [entries, indices, indices, depths]
 }
 
-function allCommentsFlattened() {
+function allCommentsFlattened(): [Element[], number[], number[], number[]]  {
     let comments = []
     let parentIndices = []
     let depths = []
@@ -277,7 +279,7 @@ function getAllChildComments(
 
 
 function toggleCollapse() {
-    let comment = allComments[currentIndex].children[0]
+    let comment = allComments[currentIndex].children[0] as HTMLDetailsElement
     const currentDepth = depths[currentIndex]
     if (comment.open) {
         collapse(currentDepth)
@@ -318,7 +320,7 @@ function togglePreview() {
         initTriggered = true
         scrollToIndex(0, 0)
     }
-    const element = document.querySelectorAll('.entry')[currentIndex]
+    const element = allComments[currentIndex]
     const meta = searchByClass(element.children, 'meta')
     const links = searchByClass(meta.children, 'links')
     let container = searchByTag(links.children, 'details')
@@ -343,7 +345,7 @@ function openComments() {
     if (document.URL.includes('/u/')) {
         entry = allComments[currentIndex].children[2]
     } else {
-        entry = document.querySelectorAll('.entry')[currentIndex]
+        entry = allComments[currentIndex]
     }
     const meta = searchByClass(entry.children, 'meta')
     let comments
@@ -360,7 +362,7 @@ function openComments() {
 
 
 function changeImageSize(by: number) {
-    const element = document.querySelectorAll('.entry')[currentIndex]
+    const element = allComments[currentIndex]
     const meta = searchByClass(element.children, 'meta')
     const links = searchByClass(meta.children, 'links')
     const container = searchByTag(links.children, 'details')
