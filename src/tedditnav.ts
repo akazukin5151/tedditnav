@@ -320,19 +320,24 @@ function togglePreview() {
         initTriggered = true
         scrollToIndex(0, 0)
     }
-    const element = allComments[currentIndex]
-    const meta = searchByClass(element.children, 'meta')
+    let entry
+    if (document.URL.includes('/u/')) {
+        entry = allComments[currentIndex].children[2]
+    } else {
+        entry = allComments[currentIndex]
+    }
+    const meta = searchByClass(entry.children, 'meta')
     const links = searchByClass(meta.children, 'links')
     let container = searchByTag(links.children, 'details')
     container.open = !container.open
     // In case if the preview is at the bottom of the page
-    element.scrollIntoView()
+    entry.scrollIntoView()
 
     // Resize the image to fit the browser screen
     let image = searchByClass(container.children, 'preview').children[0]
     const height = document.documentElement.clientHeight
     const new_height = height
-        - searchByClass(element.children, 'title').clientHeight
+        - searchByClass(entry.children, 'title').clientHeight
         - searchByClass(meta.children, 'submitted').clientHeight
         - searchByClass(container.children, 'summary').clientHeight
     image.style.setProperty('max-height', new_height.toString() + 'px', 'important')
@@ -362,8 +367,13 @@ function openComments() {
 
 
 function changeImageSize(by: number) {
-    const element = allComments[currentIndex]
-    const meta = searchByClass(element.children, 'meta')
+    let entry
+    if (document.URL.includes('/u/')) {
+        entry = allComments[currentIndex].children[2]
+    } else {
+        entry = allComments[currentIndex]
+    }
+    const meta = searchByClass(entry.children, 'meta')
     const links = searchByClass(meta.children, 'links')
     const container = searchByTag(links.children, 'details')
     let image = searchByClass(container.children, 'preview').children[0]
