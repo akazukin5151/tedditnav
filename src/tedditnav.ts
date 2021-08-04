@@ -10,62 +10,53 @@ const [
 ] = getAllElementsFlattened()
 
 
+function isUserPage() {
+    return document.URL.includes('/u/')
+}
+
 function abstractHandlePostClick(
     event: Event,
-    comp: (clicked: Element) => boolean,
-    processor: (post: Element) => Element,
+    classNameMatches: (clicked: Element) => boolean,
+    processor: (post: Element) => Element
 ) {
     let clickedPost = event!.target as Element
-    while (comp(clickedPost)) {
+    while (!classNameMatches(clickedPost)) {
         clickedPost = (<Node>clickedPost!).parentElement!!
     }
     clickedPost = processor(clickedPost)
     for (const [idx, post] of allComments.entries()) {
         let postnode = post as Node
         let clickedPostNode = clickedPost as Node
-        if (
-            postnode.textContent === clickedPostNode!.textContent
-            && currentIndex !== idx
-        ) {
+        if (postnode.textContent === clickedPostNode!.textContent && extra(idx)) {
             selectIndex(currentIndex, idx)
             currentIndex = idx
-            break
+            return
         }
     }
 }
 
+function extra(idx: number): boolean {
+    return isUserPage()
+           ? true
+           : currentIndex !== idx
+}
+
 function handleCommentClick(event: Event) {
-    function processor(clickedComment: Element) {
-        // if classList doesn't contain odd or even depth...
-        if (clickedComment.classList.length < 2) {
-            // ...then this is a user page not a comment page
-            // In a user page, allComments collects elements with class `entry` instead
-            while (clickedComment.className !== 'entry') {
-                clickedComment = clickedComment.parentElement!!
-            }
-        }
-        return clickedComment
-    }
+    const classname = isUserPage() ? 'commententry' : 'comment'
     return abstractHandlePostClick(
         event,
-        (clicked) => !clicked.className.includes('comment'),
-        processor
+        (clicked) => clicked.className.includes(classname),
+        (x) => x,
     )
 }
 
 function handlePostClick(event: Event) {
     return abstractHandlePostClick(
         event,
-        (clicked) => clicked.className !== 'link',
-        (post) => post.children[2]
-    )
-}
-
-function handleUserPostClick(event: Event) {
-    return abstractHandlePostClick(
-        event,
-        (clicked) => clicked.className !== 'entry t3',
-        (x) => x
+        (clicked) => clicked.className === 'link',
+        isUserPage()
+            ? (x) => x
+            : (x) => x.children[2]
     )
 }
 
@@ -75,10 +66,6 @@ Array.from(document.getElementsByClassName('comment')).forEach(
 
 Array.from(document.getElementsByClassName('link')).forEach(
     el => el.addEventListener('click', handlePostClick, false)
-)
-
-Array.from(document.getElementsByClassName('entry t3')).forEach(
-    el => el.addEventListener('click', handleUserPostClick, false)
 )
 
 function inputFocused() {
@@ -224,7 +211,7 @@ function selectIndex(oldIndex: number, newIndex: number) {
 
 
 function getAllElementsFlattened(): [Element[], number[], number[], number[]] {
-    if (document.URL.includes('/u/')) {
+    if (isUserPage()) {
         return getUserElements()
     }
     const posts = document.querySelectorAll('.entry')
@@ -396,7 +383,7 @@ function searchByTag(elements: HTMLCollection, name: string): Element {
 }
 
 function getCurrentEntry() {
-    if (document.URL.includes('/u/')) {
+    if (isUserPage()) {
         return allComments[currentIndex].children[2]
     }
     return allComments[currentIndex]
