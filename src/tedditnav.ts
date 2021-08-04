@@ -3,8 +3,10 @@ import { browser } from "webextension-polyfill-ts"
 var initTriggered: boolean = false
 var currentIndex: number = 0
 var previewEnabled: boolean = false
-var collapsedIndicesRoots: Set<number> = new Set()
-var allCollapsedIndices: Set<number> = new Set()
+// Tracks which collapsed comment is making which comments invisible
+let invisibleComments: Map<number, number[]> = new Map()
+// Tracks only the positions of the invisible comments
+let invisibleCommentsIdx: Set<number> = new Set()
 const [
     allComments, allCommentsIdx, parentCommentsIdx, depths
 ] = getAllElementsFlattened()
@@ -136,13 +138,15 @@ function goDownChild(currentIndex: number, allIndices: number[]): number {
     if (currentIndex === allIndices[-1]) {
         return currentIndex
     }
-    if (collapsedIndicesRoots.has(currentIndex)) {
-        // Find the next comment not collapsed
+    let tentative = currentIndex + 1
+    // if current comment is collapsed (immediate children are invisible),
+    // find the next visible comment
+    if (invisibleCommentsIdx.has(tentative)) {
         return allCommentsIdx
             .slice(currentIndex + 1)
-            .find((idx) => !allCollapsedIndices.has(idx))!
+            .find((idx) => !invisibleCommentsIdx.has(idx))!
     }
-    return currentIndex + 1
+    return tentative
 }
 
 function goUpChild(currentIndex: number): number {
@@ -153,15 +157,16 @@ function goUpChild(currentIndex: number): number {
     if (currentIndex === 0) {
         return currentIndex
     }
-    const tenatative = currentIndex - 1
-    if (collapsedIndicesRoots.size > 0 && allCollapsedIndices.has(tenatative)) {
-        // Look for the previous collapsed root comment
-        return allCommentsIdx
-                .slice(0, currentIndex)
-                .reverse()
-                .find((idx) => collapsedIndicesRoots.has(idx))!
+    const tentative = currentIndex - 1
+    // if tentative is invisible, find the previous comment that is visible
+    if (invisibleCommentsIdx.has(tentative)) {
+        for (let idx of allCommentsIdx.slice(0, currentIndex).reverse()) {
+            if (!invisibleCommentsIdx.has(idx)) {
+                return idx
+            }
+        }
     }
-    return tenatative
+    return tentative
 }
 
 function goDownParent(currentIndex: number, parentCommentsIdx: number[]) {
@@ -276,35 +281,39 @@ function toggleCollapse() {
     if (comment.open) {
         collapse(currentDepth)
     } else {
-        uncollapse(currentDepth)
+        uncollapse()
     }
     comment.open = !comment.open
 }
 
 function collapse(currentDepth: number) {
-    collapsedIndicesRoots.add(currentIndex)
-    // Also push in every next comment with a greater depth,
+    // Push in every next comment with a greater depth,
     // until meeting a comment with equal depth
-    allCollapsedIndices.add(currentIndex)
     for (const [idx, depth] of depths.slice(currentIndex + 1).entries()) {
         if (depth > currentDepth) {
-            allCollapsedIndices.add(idx + currentIndex + 1)
+            let invisIdx = idx + currentIndex + 1
+            invisibleCommentsIdx.add(invisIdx)
+            // Also register each newly-invisible comment as being
+            // hidden by the current comment that's about to be collapsed
+            let arr = invisibleComments.get(currentIndex) ?? []
+            let newarr = arr.concat([invisIdx])
+            invisibleComments.set(currentIndex, newarr)
         } else {
             break
         }
     }
 }
 
-function uncollapse(currentDepth: number) {
-    collapsedIndicesRoots.delete(currentIndex)
-    allCollapsedIndices.delete(currentIndex)
-    for (const collapsedIdx of allCollapsedIndices) {
-        if (depths[collapsedIdx] > currentDepth) {
-            allCollapsedIndices.delete(collapsedIdx)
-        } else if (depths[collapsedIdx] === currentDepth) {
-            break
-        }
-    }
+function uncollapse() {
+    // Remove all comments marked as invisible for the current (collapsed) comment
+    invisibleComments.get(currentIndex)?.forEach(
+        idx => invisibleCommentsIdx.delete(idx)
+    )
+    invisibleComments.delete(currentIndex)
+    // Add back any comments still invisible because of other collapsed comments
+    invisibleComments.forEach(
+        indices => indices.map(idx => invisibleCommentsIdx.add(idx))
+    )
 }
 
 function togglePreview() {
