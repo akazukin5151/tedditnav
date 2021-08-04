@@ -11,17 +11,22 @@ const [
 
 
 function abstractHandlePostClick(
-    event: any,
-    comp: (clicked: any) => any,
-    processor: (post: any) => any,
+    event: Event,
+    comp: (clicked: Element) => boolean,
+    processor: (post: Element) => Element,
 ) {
-    let clickedPost = event.target
+    let clickedPost = event!.target as Element
     while (comp(clickedPost)) {
-        clickedPost = clickedPost.parentElement
+        clickedPost = (<Node>clickedPost!).parentElement!!
     }
     clickedPost = processor(clickedPost)
     for (const [idx, post] of allComments.entries()) {
-        if (post.textContent === clickedPost.textContent && currentIndex !== idx) {
+        let postnode = post as Node
+        let clickedPostNode = clickedPost as Node
+        if (
+            postnode.textContent === clickedPostNode!.textContent
+            && currentIndex !== idx
+        ) {
             selectIndex(currentIndex, idx)
             currentIndex = idx
             break
@@ -29,14 +34,14 @@ function abstractHandlePostClick(
     }
 }
 
-function handleCommentClick(event: any) {
-    function processor(clickedComment: any) {
+function handleCommentClick(event: Event) {
+    function processor(clickedComment: Element) {
         // if classList doesn't contain odd or even depth...
         if (clickedComment.classList.length < 2) {
             // ...then this is a user page not a comment page
             // In a user page, allComments collects elements with class `entry` instead
             while (clickedComment.className !== 'entry') {
-                clickedComment = clickedComment.parentElement
+                clickedComment = clickedComment.parentElement!!
             }
         }
         return clickedComment
@@ -48,7 +53,7 @@ function handleCommentClick(event: any) {
     )
 }
 
-function handlePostClick(event: any) {
+function handlePostClick(event: Event) {
     return abstractHandlePostClick(
         event,
         (clicked) => clicked.className !== 'link',
@@ -56,7 +61,7 @@ function handlePostClick(event: any) {
     )
 }
 
-function handleUserPostClick(event: any) {
+function handleUserPostClick(event: Event) {
     return abstractHandlePostClick(
         event,
         (clicked) => clicked.className !== 'entry t3',
@@ -77,7 +82,7 @@ Array.from(document.getElementsByClassName('entry t3')).forEach(
 )
 
 function inputFocused() {
-    const active: any = document.activeElement
+    const active = document.activeElement as HTMLInputElement
     try {
         if (active.type === 'text') {
             return true
@@ -245,7 +250,7 @@ function allCommentsFlattened(): [Element[], number[], number[], number[]]  {
     let parentIndices = []
     let depths = []
     const parentComments = document.querySelectorAll('.comments')[0].children
-    for (const comment of <any>parentComments) {
+    for (const comment of parentComments) {
         comments.push(comment)
         depths.push(0)
         parentIndices.push(comments.length - 1)
@@ -258,8 +263,8 @@ function allCommentsFlattened(): [Element[], number[], number[], number[]]  {
 }
 
 function getAllChildComments(
-    parentComment: any, currentDepth: number
-): [any[], number[]] {
+    parentComment: Element, currentDepth: number
+): [Element[], number[]] {
     const thisComment = parentComment.children[0].children
     let comments = []
     let depths = []
@@ -323,18 +328,19 @@ function togglePreview() {
     const entry = getCurrentEntry()
     const meta = searchByClass(entry.children, 'meta')
     const links = searchByClass(meta.children, 'links')
-    let container = searchByTag(links.children, 'details')
+    let container = searchByTag(links.children, 'details') as HTMLDetailsElement
     container.open = !container.open
     // In case if the preview is at the bottom of the page
     entry.scrollIntoView()
 
     // Resize the image to fit the browser screen
-    let image = searchByClass(container.children, 'preview').children[0]
+    let image =
+        searchByClass(container.children, 'preview').children[0] as HTMLElement
     const height = document.documentElement.clientHeight
         - searchByClass(entry.children, 'title').clientHeight
         - searchByClass(meta.children, 'submitted').clientHeight
         - searchByClass(container.children, 'summary').clientHeight
-    image.style.setProperty('max-height', height.toString() + 'px', 'important')
+    image.style.setProperty('max-height', height.toString() + 'PX', 'important')
 
     previewEnabled = !previewEnabled
 }
@@ -345,11 +351,11 @@ function openComments() {
     let comments
     if (meta) {
         const links = searchByClass(meta.children, 'links')
-        comments = searchByClass(links.children, 'comments')
+        comments = searchByClass(links.children, 'comments') as HTMLAnchorElement
     } else {
         const title = searchByClass(entry.children, 'title')
         const meta = searchByClass(title.children, 'meta')
-        comments = searchByClass(meta.children, 'comments')
+        comments = searchByClass(meta.children, 'comments') as HTMLAnchorElement
     }
     browser.runtime.sendMessage({"url": comments.href})
 }
@@ -360,25 +366,33 @@ function changeImageSize(by: number) {
     const meta = searchByClass(entry.children, 'meta')
     const links = searchByClass(meta.children, 'links')
     const container = searchByTag(links.children, 'details')
-    let image = searchByClass(container.children, 'preview').children[0]
+    let image = searchByClass(
+        container.children, 'preview'
+    ).children[0] as HTMLCanvasElement
     const new_height = image.height + by
-    image.style.setProperty('max-height', new_height.toString() + 'px', 'important')
+    image.style.setProperty(
+        'max-height', new_height.toString() + 'px', 'important'
+    )
 }
 
-function searchByClass(elements: HTMLCollection, name: string) {
-    for (const element of <any>elements) {
+function searchByClass(elements: HTMLCollection, name: string): Element {
+    let elems: Element[] = Array.from(elements)
+    for (const element of elems) {
         if (element.className === name || element.localName === name) {
             return element
         }
     }
+    throw `${elements} does not contain a class called ${name}`
 }
 
-function searchByTag(elements: HTMLCollection, name: string) {
-    for (const element of <any>elements) {
+function searchByTag(elements: HTMLCollection, name: string): Element {
+    let elems: Element[] = Array.from(elements)
+    for (const element of elems) {
         if (element.localName === name) {
             return element
         }
     }
+    throw `${elements} does not contain a tag called ${name}`
 }
 
 function getCurrentEntry() {
