@@ -5,7 +5,6 @@ export function goDownChild(
     allCommentsIdx: number[]
 ): number {
     if (!initTriggered) {
-        initTriggered = true
         return currentIndex
     }
     if (currentIndex === allCommentsIdx[-1]) {
@@ -29,7 +28,6 @@ export function goUpChild(
     allCommentsIdx: number[]
 ): number {
     if (!initTriggered) {
-        initTriggered = true
         return currentIndex
     }
     if (currentIndex === 0) {

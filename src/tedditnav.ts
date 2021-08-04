@@ -84,7 +84,7 @@ function inputFocused() {
 }
 
 async function onPress(
-    currentIndex: number, previewEnabled: boolean, event: KeyboardEvent
+    previewEnabled: boolean, event: KeyboardEvent
 ) {
     if (inputFocused()) {
         return
@@ -129,6 +129,9 @@ async function onPress(
             break
         default:
             return
+    }
+    if (!initTriggered) {
+        initTriggered = true
     }
     let shouldToggleAgain = false
     if (previewEnabled) {
@@ -368,7 +371,7 @@ function main() {
 
     document.addEventListener(
         'keypress',
-        e => onPress(currentIndex, previewEnabled, e)
+        e => onPress(previewEnabled, e)
     )
 }
 main()
