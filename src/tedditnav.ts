@@ -1,8 +1,11 @@
 import { browser } from "webextension-polyfill-ts"
+import { goUpChild, goDownChild } from './motion'
+import { collapse, uncollapse } from './collapsing'
 
-var initTriggered: boolean = false
-var currentIndex: number = 0
-var previewEnabled: boolean = false
+
+let initTriggered: boolean = false
+let currentIndex: number = 0
+let previewEnabled: boolean = false
 // Tracks which collapsed comment is making which comments invisible
 let invisibleComments: Map<number, number[]> = new Map()
 // Tracks only the positions of the invisible comments
@@ -17,6 +20,7 @@ function isUserPage() {
 }
 
 function abstractHandlePostClick(
+    currentIndex: number,
     event: Event,
     classNameMatches: (clicked: Element) => boolean,
     processor: (post: Element) => Element
@@ -29,7 +33,10 @@ function abstractHandlePostClick(
     for (const [idx, post] of allComments.entries()) {
         let postnode = post as Node
         let clickedPostNode = clickedPost as Node
-        if (postnode.textContent === clickedPostNode!.textContent && extra(idx)) {
+        if (
+            postnode.textContent === clickedPostNode!.textContent
+            && extra(currentIndex, idx)
+        ) {
             selectIndex(currentIndex, idx)
             currentIndex = idx
             return
@@ -37,23 +44,25 @@ function abstractHandlePostClick(
     }
 }
 
-function extra(idx: number): boolean {
+function extra(currentIndex: number, idx: number): boolean {
     return isUserPage()
            ? true
            : currentIndex !== idx
 }
 
-function handleCommentClick(event: Event) {
+function handleCommentClick(currentIndex: number, event: Event) {
     const classname = isUserPage() ? 'commententry' : 'comment'
     return abstractHandlePostClick(
+        currentIndex,
         event,
         (clicked) => clicked.className.includes(classname),
         (x) => x,
     )
 }
 
-function handlePostClick(event: Event) {
+function handlePostClick(currentIndex: number, event: Event) {
     return abstractHandlePostClick(
+        currentIndex,
         event,
         (clicked) => clicked.className === 'link',
         isUserPage()
@@ -61,14 +70,6 @@ function handlePostClick(event: Event) {
             : (x) => x.children[2]
     )
 }
-
-Array.from(document.getElementsByClassName('comment')).forEach(
-    el => el.addEventListener('click', handleCommentClick, false)
-)
-
-Array.from(document.getElementsByClassName('link')).forEach(
-    el => el.addEventListener('click', handlePostClick, false)
-)
 
 function inputFocused() {
     const active = document.activeElement as HTMLInputElement
@@ -82,21 +83,27 @@ function inputFocused() {
     return false
 }
 
-document.addEventListener('keypress', async function onPress(event) {
-    if (inputFocused()) {return}
+async function onPress(
+    currentIndex: number, previewEnabled: boolean, event: KeyboardEvent
+) {
+    if (inputFocused()) {
+        return
+    }
     const settings = await browser.storage.sync.get()
 
     switch (event.key) {
         case settings.opencomments:
-            return openComments()
+            return openComments(currentIndex)
         case settings.togglepreview:
-            return togglePreview()
+            return togglePreview(initTriggered, currentIndex, previewEnabled)
         case settings.togglecollapse:
-            return toggleCollapse()
+            return toggleCollapse(
+                allComments, currentIndex, invisibleComments, invisibleCommentsIdx
+            )
         case settings.incimgsize:
-            return changeImageSize(Number(settings.incdecsize))
+            return changeImageSize(currentIndex, Number(settings.incdecsize))
         case settings.decimgsize:
-            return changeImageSize(-1 * Number(settings.incdecsize))
+            return changeImageSize(currentIndex, -1 * Number(settings.incdecsize))
         default:
             break
     }
@@ -104,16 +111,21 @@ document.addEventListener('keypress', async function onPress(event) {
     let newIndex: number = 0  // Will be changed anyway
     switch (event.key) {
         case settings.nextparent:
-            newIndex = goDownParent(currentIndex, parentCommentsIdx)
+            newIndex = goDownParent(initTriggered, currentIndex, parentCommentsIdx)
             break
         case settings.prevparent:
-            newIndex = goUpParent(currentIndex)
+            newIndex = goUpParent(initTriggered, currentIndex)
             break
         case settings.nextall:
-            newIndex = goDownChild(currentIndex, allCommentsIdx)
+            newIndex = goDownChild(
+                initTriggered, currentIndex, invisibleCommentsIdx,
+                allCommentsIdx
+            )
             break
         case settings.prevall:
-            newIndex = goUpChild(currentIndex)
+            newIndex = goUpChild(
+                initTriggered, currentIndex, invisibleCommentsIdx, allCommentsIdx
+            )
             break
         default:
             return
@@ -121,55 +133,19 @@ document.addEventListener('keypress', async function onPress(event) {
     let shouldToggleAgain = false
     if (previewEnabled) {
         shouldToggleAgain = true
-        togglePreview()
+        togglePreview(initTriggered, currentIndex, previewEnabled)
     }
     scrollToIndex(currentIndex, newIndex)
     currentIndex = newIndex
     if (shouldToggleAgain) {
-        togglePreview()
+        togglePreview(initTriggered, currentIndex, previewEnabled)
     }
-})
-
-function goDownChild(currentIndex: number, allIndices: number[]): number {
-    if (!initTriggered) {
-        initTriggered = true
-        return currentIndex
-    }
-    if (currentIndex === allIndices[-1]) {
-        return currentIndex
-    }
-    let tentative = currentIndex + 1
-    // if current comment is collapsed (immediate children are invisible),
-    // find the next visible comment
-    if (invisibleCommentsIdx.has(tentative)) {
-        return allCommentsIdx
-            .slice(currentIndex + 1)
-            .find((idx) => !invisibleCommentsIdx.has(idx))!
-    }
-    return tentative
 }
 
-function goUpChild(currentIndex: number): number {
-    if (!initTriggered) {
-        initTriggered = true
-        return currentIndex
-    }
-    if (currentIndex === 0) {
-        return currentIndex
-    }
-    const tentative = currentIndex - 1
-    // if tentative is invisible, find the previous comment that is visible
-    if (invisibleCommentsIdx.has(tentative)) {
-        for (let idx of allCommentsIdx.slice(0, currentIndex).reverse()) {
-            if (!invisibleCommentsIdx.has(idx)) {
-                return idx
-            }
-        }
-    }
-    return tentative
-}
 
-function goDownParent(currentIndex: number, parentCommentsIdx: number[]) {
+function goDownParent(
+    initTriggered: boolean, currentIndex: number, parentCommentsIdx: number[]
+) {
     if (!initTriggered) {
         initTriggered = true
         return currentIndex
@@ -184,7 +160,7 @@ function goDownParent(currentIndex: number, parentCommentsIdx: number[]) {
     return parentCommentsIdx.find(idx => idx >= currentIndex) || currentIndex
 }
 
-function goUpParent(currentIndex: number) {
+function goUpParent(initTriggered: boolean, currentIndex: number) {
     if (!initTriggered) {
         initTriggered = true
         return currentIndex
@@ -274,54 +250,33 @@ function getAllChildComments(
 }
 
 
-
-function toggleCollapse() {
+function toggleCollapse(
+    allComments: Element[],
+    currentIndex: number,
+    invisibleComments: Map<number, number[]>,
+    invisibleCommentsIdx: Set<number>
+) {
     let comment = allComments[currentIndex].children[0] as HTMLDetailsElement
     const currentDepth = depths[currentIndex]
     if (comment.open) {
-        collapse(currentDepth)
+        collapse(
+            currentIndex, invisibleComments, invisibleCommentsIdx, currentDepth,
+            depths
+        )
     } else {
-        uncollapse()
+        uncollapse(invisibleComments, currentIndex, invisibleCommentsIdx)
     }
     comment.open = !comment.open
 }
 
-function collapse(currentDepth: number) {
-    // Push in every next comment with a greater depth,
-    // until meeting a comment with equal depth
-    for (const [idx, depth] of depths.slice(currentIndex + 1).entries()) {
-        if (depth > currentDepth) {
-            let invisIdx = idx + currentIndex + 1
-            invisibleCommentsIdx.add(invisIdx)
-            // Also register each newly-invisible comment as being
-            // hidden by the current comment that's about to be collapsed
-            let arr = invisibleComments.get(currentIndex) ?? []
-            let newarr = arr.concat([invisIdx])
-            invisibleComments.set(currentIndex, newarr)
-        } else {
-            break
-        }
-    }
-}
-
-function uncollapse() {
-    // Remove all comments marked as invisible for the current (collapsed) comment
-    invisibleComments.get(currentIndex)?.forEach(
-        idx => invisibleCommentsIdx.delete(idx)
-    )
-    invisibleComments.delete(currentIndex)
-    // Add back any comments still invisible because of other collapsed comments
-    invisibleComments.forEach(
-        indices => indices.map(idx => invisibleCommentsIdx.add(idx))
-    )
-}
-
-function togglePreview() {
+function togglePreview(
+    initTriggered: boolean, currentIndex: number, previewEnabled: boolean
+) {
     if (!initTriggered) {
         initTriggered = true
         scrollToIndex(0, 0)
     }
-    const entry = getCurrentEntry()
+    const entry = getCurrentEntry(currentIndex)
     const meta = searchByClass(entry.children, 'meta')
     const links = searchByClass(meta.children, 'links')
     let container = searchByTag(links.children, 'details') as HTMLDetailsElement
@@ -336,13 +291,13 @@ function togglePreview() {
         - searchByClass(entry.children, 'title').clientHeight
         - searchByClass(meta.children, 'submitted').clientHeight
         - searchByClass(container.children, 'summary').clientHeight
-    image.style.setProperty('max-height', height.toString() + 'PX', 'important')
+    image.style.setProperty('max-height', height.toString() + 'px', 'important')
 
     previewEnabled = !previewEnabled
 }
 
-function openComments() {
-    const entry = getCurrentEntry()
+function openComments(currentIndex: number) {
+    const entry = getCurrentEntry(currentIndex)
     const meta = searchByClass(entry.children, 'meta')
     let comments
     if (meta) {
@@ -357,8 +312,8 @@ function openComments() {
 }
 
 
-function changeImageSize(by: number) {
-    const entry = getCurrentEntry()
+function changeImageSize(currentIndex: number, by: number) {
+    const entry = getCurrentEntry(currentIndex)
     const meta = searchByClass(entry.children, 'meta')
     const links = searchByClass(meta.children, 'links')
     const container = searchByTag(links.children, 'details')
@@ -367,7 +322,7 @@ function changeImageSize(by: number) {
     ).children[0] as HTMLCanvasElement
     const new_height = image.height + by
     image.style.setProperty(
-        'max-height', new_height.toString() + 'px', 'important'
+        'max-height', new_height.toString() + 'PX', 'important'
     )
 }
 
@@ -391,9 +346,29 @@ function searchByTag(elements: HTMLCollection, name: string): Element {
     throw `${elements} does not contain a tag called ${name}`
 }
 
-function getCurrentEntry() {
+function getCurrentEntry(currentIndex: number) {
     if (isUserPage()) {
         return allComments[currentIndex].children[2]
     }
     return allComments[currentIndex]
 }
+
+function main() {
+    Array.from(document.getElementsByClassName('comment')).forEach(
+        el => el.addEventListener(
+            'click', e => handleCommentClick(currentIndex, e), false
+        )
+    )
+
+    Array.from(document.getElementsByClassName('link')).forEach(
+        el => el.addEventListener(
+            'click', e => handlePostClick(currentIndex, e), false
+        )
+    )
+
+    document.addEventListener(
+        'keypress',
+        e => onPress(currentIndex, previewEnabled, e)
+    )
+}
+main()

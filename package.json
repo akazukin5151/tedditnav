@@ -1,14 +1,20 @@
 {
   "scripts": {
-      "build": "npx webpack --mode=production",
-      "dev": "npx webpack --mode=development",
-      "clean": "rm -r build/",
-      "release": "zip -r -FS build/tedditnav.zip build/ LICENSE manifest.json README.md && zip -r -FS build/source.zip * --exclude '*.git*' --exclude '*node_modules*'"
+    "test": "jest",
+    "build": "npx webpack --mode=production",
+    "dev": "npx webpack --mode=development",
+    "clean": "rm -r build/",
+    "release": "zip -r -FS build/tedditnav.zip build/ LICENSE manifest.json README.md && zip -r -FS build/source.zip * --exclude '*.git*' --exclude '*node_modules*'"
   },
   "dependencies": {
     "ts-loader": "^9.2.2",
     "webextension-polyfill-ts": "^0.25.0",
     "webpack": "^5.37.1",
     "webpack-cli": "^4.7.0"
+  },
+  "devDependencies": {
+    "@types/jest": "^26.0.24",
+    "jest": "^27.0.6",
+    "ts-jest": "^27.0.4"
   }
 }
