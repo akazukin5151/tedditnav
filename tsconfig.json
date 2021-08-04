@@ -4,7 +4,7 @@
   "compilerOptions": {
     "moduleResolution": "node",
     "outDir": "build",
-    "lib": ["es2016", "dom", "dom.Iterable"],
+    "lib": ["es2019", "dom", "dom.Iterable"],
     "downlevelIteration": true,
     "noImplicitAny": true,
     "strictNullChecks": true,
