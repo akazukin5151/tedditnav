@@ -81,7 +81,7 @@ function inputFocused() {
 }
 
 async function onPress(
-    previewEnabled: boolean, event: KeyboardEvent
+    event: KeyboardEvent
 ) {
     if (inputFocused()) {
         return
@@ -92,7 +92,8 @@ async function onPress(
         case settings.opencomments:
             return openComments(currentIndex)
         case settings.togglepreview:
-            return togglePreview(initTriggered, currentIndex, previewEnabled)
+            previewEnabled = togglePreview(initTriggered, currentIndex, previewEnabled)
+            return
         case settings.togglecollapse:
             return toggleCollapse(
                 allComments, currentIndex, invisibleComments, invisibleCommentsIdx
@@ -133,12 +134,12 @@ async function onPress(
     let shouldToggleAgain = false
     if (previewEnabled) {
         shouldToggleAgain = true
-        togglePreview(initTriggered, currentIndex, previewEnabled)
+        previewEnabled = togglePreview(initTriggered, currentIndex, previewEnabled)
     }
     scrollToIndex(currentIndex, newIndex)
     currentIndex = newIndex
     if (shouldToggleAgain) {
-        togglePreview(initTriggered, currentIndex, previewEnabled)
+        previewEnabled = togglePreview(initTriggered, currentIndex, previewEnabled)
     }
 }
 
@@ -293,7 +294,7 @@ function togglePreview(
         - searchByClass(container.children, 'summary').clientHeight
     image.style.setProperty('max-height', height.toString() + 'px', 'important')
 
-    previewEnabled = !previewEnabled
+    return !previewEnabled
 }
 
 function openComments(currentIndex: number) {
@@ -366,9 +367,6 @@ function main() {
         )
     )
 
-    document.addEventListener(
-        'keypress',
-        e => onPress(previewEnabled, e)
-    )
+    document.addEventListener('keypress', onPress)
 }
 main()
