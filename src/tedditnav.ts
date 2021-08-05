@@ -20,7 +20,6 @@ function isUserPage() {
 }
 
 function abstractHandlePostClick(
-    currentIndex: number,
     event: Event,
     classNameMatches: (clicked: Element) => boolean,
     processor: (post: Element) => Element
@@ -50,19 +49,17 @@ function extra(currentIndex: number, idx: number): boolean {
            : currentIndex !== idx
 }
 
-function handleCommentClick(currentIndex: number, event: Event) {
+function handleCommentClick(event: Event) {
     const classname = isUserPage() ? 'commententry' : 'comment'
     return abstractHandlePostClick(
-        currentIndex,
         event,
         (clicked) => clicked.className.includes(classname),
         (x) => x,
     )
 }
 
-function handlePostClick(currentIndex: number, event: Event) {
+function handlePostClick(event: Event) {
     return abstractHandlePostClick(
-        currentIndex,
         event,
         (clicked) => clicked.className === 'link',
         isUserPage()
@@ -359,13 +356,13 @@ function getCurrentEntry(currentIndex: number) {
 function main() {
     Array.from(document.getElementsByClassName('comment')).forEach(
         el => el.addEventListener(
-            'click', e => handleCommentClick(currentIndex, e), false
+            'click', handleCommentClick, false
         )
     )
 
     Array.from(document.getElementsByClassName('link')).forEach(
         el => el.addEventListener(
-            'click', e => handlePostClick(currentIndex, e), false
+            'click', handlePostClick, false
         )
     )
 
