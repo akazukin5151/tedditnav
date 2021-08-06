@@ -28,6 +28,10 @@ function abstractHandlePostClick(
     while (!classNameMatches(clickedPost)) {
         clickedPost = (<Node>clickedPost!).parentElement!!
     }
+    // Clicked on "load more comments"; ignore
+    if (clickedPost.classList.length < 2) {
+        return
+    }
     clickedPost = processor(clickedPost)
     for (const [idx, post] of allComments.entries()) {
         let postnode = post as Node
