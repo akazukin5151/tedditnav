@@ -29,7 +29,7 @@ function abstractHandlePostClick(
         clickedPost = (<Node>clickedPost!).parentElement!!
     }
     // Clicked on "load more comments"; ignore
-    if (clickedPost.classList.length < 2) {
+    if (clickedPost.className === 'load-more-comments') {
         return
     }
     clickedPost = processor(clickedPost)
