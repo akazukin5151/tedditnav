@@ -1,5 +1,7 @@
 # tedditnav
 
+[![status](https://img.shields.io/badge/status-active-green)](https://img.shields.io/badge/status-active-green)
+
 <a href="https://addons.mozilla.org/addon/tedditnav/"><img src=https://blog.mozilla.org/addons/files/2020/04/get-the-addon-fx-apr-2020.svg height="50"></a>
 
 Add basic keyboard navigation to teddit.net
