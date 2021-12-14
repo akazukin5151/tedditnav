@@ -17,7 +17,7 @@
   ],
 
   "options_ui": {
-      "page": "src/options.html"
+      "page": "build/options.html"
   },
   "permissions": ["storage"],
   "browser_specific_settings": {

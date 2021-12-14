@@ -1,8 +1,8 @@
 {
   "scripts": {
     "test": "jest",
-    "build": "npx webpack --mode=production",
-    "dev": "npx webpack --mode=development",
+    "build": "npx webpack --mode=production && cp src/options.html build/",
+    "dev": "npx webpack --mode=development && cp src/options.html build/",
     "clean": "rm -r build/",
     "release": "zip -r -FS build/tedditnav.zip build/ LICENSE manifest.json README.md && zip -r -FS build/source.zip * --exclude '*.git*' --exclude '*node_modules*'"
   },
