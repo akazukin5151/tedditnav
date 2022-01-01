@@ -10,6 +10,8 @@ Based on [RES](https://github.com/honestbleeps/Reddit-Enhancement-Suite)
 
 teddit is an open source frontend for reddit (like invidio and nitter)
 
+See also: [teddit-image-previews](https://github.com/akazukin5151/teddit-image-previews)
+
 ## Features
 1. Go up/down posts, parent comments, and child comments
 2. Toggle image preview
